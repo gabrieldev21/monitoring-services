@@ -18,12 +18,4 @@ export class MetricController {
     this.metricsService.increment();
     return 'OK';
   }
-
-  @Get('health-auth')
-  async getAuthMetrics() {
-    const authMetrics = await fetch('http://ms-auth:9101/metrics').then((res) =>
-      res.json(),
-    );
-    return authMetrics.data;
-  }
 }

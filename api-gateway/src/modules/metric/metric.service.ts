@@ -23,6 +23,6 @@ export class MetricService {
   }
 
   increment() {
-    this.counter.inc();
+    this.counter.labels('200').inc();
   }
 }

@@ -1,33 +1,28 @@
-// src/metrics/metrics.service.ts
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as client from 'prom-client';
-import * as express from 'express';
 
 @Injectable()
-export class MetricService implements OnModuleInit {
-  private readonly app = express();
-  private readonly tcpRequestCounter = new client.Counter({
-    name: 'auth_tcp_requests_total',
-    help: 'Total de requisições TCP recebidas no Auth',
-  });
+export class MetricService {
+  private readonly register: client.Registry;
+  private readonly counter: client.Counter;
 
-  onModuleInit() {
-    // Coleta de métricas padrão do Node.js
-    client.collectDefaultMetrics();
-
-    // Endpoint HTTP para expor as métricas
-    this.app.get('/metrics', async (req, res) => {
-      res.set('Content-Type', client.register.contentType);
-      res.end(await client.register.metrics());
+  constructor() {
+    this.register = client.register;
+    this.counter = new client.Counter({
+      name: 'tcp_ms_auth_requests_total',
+      help: 'conta as requisições da url',
+      labelNames: ['httpStatus'],
+      registers: [this.register],
     });
+    this.register.setDefaultLabels({ app: 'ms-auth' });
+    // client.collectDefaultMetrics({ register: this.register }); validar se necessário usar posteriomente
+  }
 
-    // Porta para o servidor de métricas
-    this.app.listen(9101, () => {
-      console.log('Metrics server for ms-auth listening on port 9101');
-    });
+  async getMetrics(): Promise<string> {
+    return await this.register.metrics();
   }
 
   incrementTcpRequests() {
-    this.tcpRequestCounter.inc();
+    this.counter.labels('200').inc();
   }
 }

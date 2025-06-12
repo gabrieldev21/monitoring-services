@@ -14,6 +14,7 @@ scrape_configs:
       # - targets: [192.168.0.10:3000]
       - targets: [api-gateway:3000]
   - job_name: ms-auth
+    metrics_path: /auth/metrics
     static_configs:
       # - targets: [192.168.0.10:3001]
-      - targets: [ms-auth:9101]
+      - targets: [api-gateway:3000]
