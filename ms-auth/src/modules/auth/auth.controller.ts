@@ -10,9 +10,9 @@ export class AuthController {
     private readonly metricsService: MetricService,
   ) {}
 
-  @MessagePattern('findAllAuth')
-  findAll() {
-    return this.authService.findAll();
+  @MessagePattern('auth')
+  auth() {
+    return this.authService.authenticate();
   }
 
   @MessagePattern({ cmd: 'validate-user' })
