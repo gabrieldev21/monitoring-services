@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/tcc/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/tcc/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/tcc",
+  "projects": {
+    "tcc": {
+      "type": "application",
+      "root": "apps/tcc",
+      "entryFile": "main",
+      "sourceRoot": "apps/tcc/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/tcc/tsconfig.app.json"
+      }
+    },
+    "ms-auth": {
+      "type": "application",
+      "root": "apps/ms-auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/ms-auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ms-auth/tsconfig.app.json"
+      }
+    },
+    "ms-catalog": {
+      "type": "application",
+      "root": "apps/ms-catalog",
+      "entryFile": "main",
+      "sourceRoot": "apps/ms-catalog/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ms-catalog/tsconfig.app.json"
+      }
+    },
+    "ms-order": {
+      "type": "application",
+      "root": "apps/ms-order",
+      "entryFile": "main",
+      "sourceRoot": "apps/ms-order/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ms-order/tsconfig.app.json"
+      }
+    },
+    "ms-notification": {
+      "type": "application",
+      "root": "apps/ms-notification",
+      "entryFile": "main",
+      "sourceRoot": "apps/ms-notification/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ms-notification/tsconfig.app.json"
+      }
+    }
+  }
+}
