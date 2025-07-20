@@ -1,22 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/tcc/src",
-  "compilerOptions": {
-    "deleteOutDir": true,
-    "webpack": true,
-    "tsConfigPath": "apps/tcc/tsconfig.app.json"
-  },
   "monorepo": true,
   "root": "apps/tcc",
   "projects": {
-    "tcc": {
+    "api-gateway": {
       "type": "application",
-      "root": "apps/tcc",
+      "root": "apps/api-gateway",
       "entryFile": "main",
-      "sourceRoot": "apps/tcc/src",
+      "sourceRoot": "apps/api-gateway/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/tcc/tsconfig.app.json"
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
       }
     },
     "ms-auth": {
@@ -53,15 +47,6 @@
       "sourceRoot": "apps/ms-notification/src",
       "compilerOptions": {
         "tsConfigPath": "apps/ms-notification/tsconfig.app.json"
-      }
-    },
-    "api-gateway": {
-      "type": "application",
-      "root": "apps/api-gateway",
-      "entryFile": "main",
-      "sourceRoot": "apps/api-gateway/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
       }
     }
   }
