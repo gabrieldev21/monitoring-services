@@ -5,35 +5,101 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9090:9090"
+      - '9090:9090'
     networks:
       - mynet
+
   api-gateway:
     build:
-      context: ./api-gateway
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: api-gateway
     image: api-gateway:latest
     container_name: api-gateway
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       - prometheus
+      - ms-auth
     environment:
       - PROMETHEUS_URL=http://prometheus:9090
+      - MS_AUTH_URL=http://ms-auth:3001
     networks:
       - mynet
+    restart: unless-stopped
+
   ms-auth:
     build:
-      context: ./ms-auth
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: ms-auth
     image: ms-auth:latest
     container_name: ms-auth
     ports:
-      - "3001:3001"
+      - '3001:3001'
     depends_on:
       - prometheus
     environment:
       - PROMETHEUS_URL=http://prometheus:9090
     networks:
       - mynet
+    restart: unless-stopped
+
+  ms-catalog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: ms-catalog
+    image: ms-catalog:latest
+    container_name: ms-catalog
+    ports:
+      - '3002:3002'
+    depends_on:
+      - prometheus
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+    networks:
+      - mynet
+    restart: unless-stopped
+
+  ms-notification:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: ms-notification
+    image: ms-notification:latest
+    container_name: ms-notification
+    ports:
+      - '3003:3003'
+    depends_on:
+      - prometheus
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+    networks:
+      - mynet
+    restart: unless-stopped
+
+  ms-order:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: ms-order
+    image: ms-order:latest
+    container_name: ms-order
+    ports:
+      - '3004:3004'
+    depends_on:
+      - prometheus
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+    networks:
+      - mynet
+    restart: unless-stopped
 
 networks:
   mynet:
