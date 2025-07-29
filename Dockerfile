@@ -39,4 +39,4 @@ ARG APP_NAME
 ENV APP_NAME=${APP_NAME}
 
 # Comando dinâmico baseado no APP_NAME
-CMD pnpm run start:prod:${APP_NAME}
+CMD ["sh", "-c", "pnpm run start:prod:$APP_NAME"]

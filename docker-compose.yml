@@ -4,8 +4,30 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     ports:
       - '9090:9090'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - mynet
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - '3032:3000'
+    restart: unless-stopped
+    depends_on:
+      - prometheus
     networks:
       - mynet
 
@@ -23,11 +45,25 @@ services:
       - prometheus
       - ms-auth
     environment:
+      - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
       - MS_AUTH_URL=http://ms-auth:3001
     networks:
       - mynet
     restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://localhost:3000/health',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   ms-auth:
     build:
@@ -42,6 +78,7 @@ services:
     depends_on:
       - prometheus
     environment:
+      - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
     networks:
       - mynet
@@ -60,6 +97,7 @@ services:
     depends_on:
       - prometheus
     environment:
+      - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
     networks:
       - mynet
@@ -78,6 +116,7 @@ services:
     depends_on:
       - prometheus
     environment:
+      - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
     networks:
       - mynet
@@ -96,6 +135,7 @@ services:
     depends_on:
       - prometheus
     environment:
+      - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
     networks:
       - mynet
@@ -104,3 +144,7 @@ services:
 networks:
   mynet:
     driver: bridge
+
+volumes:
+  grafana_data:
+  prometheus_data:
