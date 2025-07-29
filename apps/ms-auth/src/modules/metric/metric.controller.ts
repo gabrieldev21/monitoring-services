@@ -8,8 +8,6 @@ export class MetricController {
 
   @MessagePattern({ cmd: 'metrics' })
   async getMetrics() {
-    console.log('getMetrics');
-    const metrics = await this.metricsService.getMetrics();
-    return { metrics };
+    return { metrics: await this.metricsService.getMetrics() };
   }
 }
