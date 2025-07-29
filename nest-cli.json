@@ -3,6 +3,10 @@
   "collection": "@nestjs/schematics",
   "monorepo": true,
   "root": "apps",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true
+  },
   "projects": {
     "api-gateway": {
       "type": "application",
