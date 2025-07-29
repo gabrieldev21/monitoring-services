@@ -11,7 +11,7 @@ import { KnexInstrumentation } from '@opentelemetry/instrumentation-knex';
 
 // Configure the trace exporter
 const traceExporter = new OTLPTraceExporter({
-  url: 'http://localhost:4317',
+  url: 'http://otel-collector:4317',
   compression: 'gzip' as any,
 });
 
