@@ -1,3 +1,4 @@
+import '../../infra/tracing';
 import { NestFactory } from '@nestjs/core';
 import { MsNotificationModule } from './ms-notification.module';
 
