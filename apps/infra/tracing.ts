@@ -1,13 +1,6 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import {
-  OTLPTraceExporter,
-  // CompressionAlgorithm,
-} from '@opentelemetry/exporter-trace-otlp-http';
-import { resourceFromAttributes } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { KnexInstrumentation } from '@opentelemetry/instrumentation-knex';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 
 // Configure the trace exporter
 const traceExporter = new OTLPTraceExporter({
@@ -17,21 +10,9 @@ const traceExporter = new OTLPTraceExporter({
 
 // Configure the SDK
 const sdk = new NodeSDK({
-  resource: resourceFromAttributes({
-    [SemanticResourceAttributes.SERVICE_NAME]:
-      process.env.SERVICE_NAME ?? 'api-pix-gateway',
-  }),
+  serviceName: process.env.SERVICE_NAME ?? 'api-pix-gateway',
   traceExporter,
-  instrumentations: [
-    new HttpInstrumentation(),
-    new KnexInstrumentation(),
-    getNodeAutoInstrumentations({
-      // Disable specific instrumentations if needed
-      '@opentelemetry/instrumentation-fs': {
-        enabled: false,
-      },
-    }),
-  ],
+  instrumentations: [getNodeAutoInstrumentations()],
 });
 
 process.on('beforeExit', async () => {

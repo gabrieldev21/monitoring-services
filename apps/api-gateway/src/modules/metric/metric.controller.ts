@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Res } from '@nestjs/common';
+import { Controller, Get, Post, Res, Body } from '@nestjs/common';
 import { Response } from 'express';
 import { MetricService } from './metric.service';
 
@@ -20,11 +20,7 @@ export class MetricController {
   }
 
   @Post()
-  showStates() {
-    return {
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      service: process.env.SERVICE_NAME || 'api-gateway',
-    };
+  showStates(@Body() body: any, @Res() res: Response) {
+    res.status(200).send(body);
   }
 }
