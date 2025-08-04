@@ -14,8 +14,6 @@ services:
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
-    networks:
-      - mynet
     restart: unless-stopped
 
   jaeger:
@@ -25,8 +23,6 @@ services:
       - '8081:16686' # Jaeger UI
       - '14268'
       - '14250'
-    networks:
-      - mynet
     restart: unless-stopped
 
   otel-collector:
@@ -45,8 +41,6 @@ services:
       - jaeger
     links:
       - jaeger
-    networks:
-      - mynet
     restart: unless-stopped
 
   grafana:
@@ -59,8 +53,6 @@ services:
     restart: unless-stopped
     depends_on:
       - prometheus
-    networks:
-      - mynet
 
   api-gateway:
     build:
@@ -82,8 +74,7 @@ services:
       - MS_AUTH_URL=http://ms-auth:3001
       - SERVICE_NAME=api-gateway
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
-    networks:
-      - mynet
+      - OTEL_EXPORTER_OTLP_TRACES_URL=http://otel-collector:4317
     restart: unless-stopped
     healthcheck:
       test:
@@ -117,8 +108,7 @@ services:
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-auth
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
-    networks:
-      - mynet
+      - OTEL_EXPORTER_OTLP_TRACES_URL=http://otel-collector:4317
     restart: unless-stopped
 
   ms-catalog:
@@ -139,8 +129,7 @@ services:
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-catalog
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
-    networks:
-      - mynet
+      - OTEL_EXPORTER_OTLP_TRACES_URL=http://otel-collector:4317
     restart: unless-stopped
 
   ms-notification:
@@ -161,8 +150,7 @@ services:
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-notification
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
-    networks:
-      - mynet
+      - OTEL_EXPORTER_OTLP_TRACES_URL=http://otel-collector:4317
     restart: unless-stopped
 
   ms-order:
@@ -183,13 +171,13 @@ services:
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-order
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
-    networks:
-      - mynet
+      - OTEL_EXPORTER_OTLP_TRACES_URL=http://otel-collector:4317
     restart: unless-stopped
 
 networks:
-  mynet:
-    driver: bridge
+  default:
+    name: mynet
+    external: true
 
 volumes:
   grafana_data:
