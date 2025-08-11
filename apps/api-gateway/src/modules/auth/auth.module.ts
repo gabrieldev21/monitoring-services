@@ -8,7 +8,10 @@ import { AuthController } from './auth.controller';
       {
         name: 'AUTH_SERVICE',
         transport: Transport.TCP,
-        options: { host: 'ms-auth', port: 3001 }, // 'ms-auth' deve ser o nome do serviço no docker-compose ou 'localhost' se local
+        options: {
+          host: process.env.NODE_ENV === 'production' ? 'ms-auth' : 'localhost',
+          port: 3001,
+        },
       },
     ]),
   ],

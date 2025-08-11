@@ -1,4 +1,4 @@
-import tracing from '../../infra/tracing';
+import tracing from '../../infra/otel-sdk';
 import { NestFactory } from '@nestjs/core';
 import { MsCatalogModule } from './ms-catalog.module';
 
