@@ -1,7 +1,6 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
-import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici';
 
 const otelSDK = new NodeSDK({
   serviceName: process.env.SERVICE_NAME || 'api-gateway',
@@ -15,11 +14,16 @@ const otelSDK = new NodeSDK({
           return req.url?.includes('/health');
         },
       },
+      '@opentelemetry/instrumentation-express': {
+        enabled: false,
+      },
+      '@opentelemetry/instrumentation-nestjs-core': {
+        enabled: false,
+      },
       '@opentelemetry/instrumentation-net': {
-        enabled: true,
+        enabled: false,
       },
     }),
-    new UndiciInstrumentation(),
   ],
 });
 
