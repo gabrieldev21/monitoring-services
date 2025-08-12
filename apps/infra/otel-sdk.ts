@@ -17,9 +17,7 @@ const otelSDK = new NodeSDK({
       '@opentelemetry/instrumentation-express': {
         enabled: false,
       },
-      '@opentelemetry/instrumentation-nestjs-core': {
-        enabled: false,
-      },
+      '@opentelemetry/instrumentation-nestjs-core': {},
       '@opentelemetry/instrumentation-net': {
         enabled: false,
       },

@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Res } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response } from 'express';
 import { firstValueFrom } from 'rxjs';
@@ -10,9 +10,9 @@ export class AuthController {
     @Inject('AUTH_SERVICE') private readonly authService: ClientProxy,
   ) {}
 
-  @Get('validate')
-  async validateUser() {
-    const messageData = injectOtelContext({ userId: 123 });
+  @Post('validate')
+  async validateUser(@Body() body: any) {
+    const messageData = injectOtelContext({ userId: body.userId });
 
     return await this.authService
       .send({ cmd: 'validate-user' }, messageData)

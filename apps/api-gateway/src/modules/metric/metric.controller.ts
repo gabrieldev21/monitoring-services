@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Res, Body } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { MetricService } from './metric.service';
 
@@ -17,10 +17,5 @@ export class MetricController {
   healthCheck(): string {
     this.metricsService.increment();
     return 'OK';
-  }
-
-  @Post()
-  showStates(@Body() body: any, @Res() res: Response) {
-    res.status(200).send(body);
   }
 }
