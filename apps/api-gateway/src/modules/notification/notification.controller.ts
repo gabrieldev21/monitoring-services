@@ -1,21 +1,25 @@
 import {
   Controller,
-  Get,
+  Body,
   Post,
+  Get,
+  Param,
   Patch,
   Delete,
-  Body,
-  Param,
 } from '@nestjs/common';
 import axios from 'axios';
 
-@Controller('catalog')
-export class CatalogController {
-  private readonly catalogServiceUrl = 'http://ms-catalog:3003/catalog';
+@Controller('notification')
+export class NotificationController {
+  private readonly catalogServiceUrl =
+    'http://ms-notification:3004/notification';
 
   @Post()
-  async create(@Body() createCatalogDto: any) {
-    const response = await axios.post(this.catalogServiceUrl, createCatalogDto);
+  async create(@Body() createNotificationDto: any) {
+    const response = await axios.post(
+      this.catalogServiceUrl,
+      createNotificationDto,
+    );
     return response.data;
   }
 
@@ -32,10 +36,10 @@ export class CatalogController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCatalogDto: any) {
+  async update(@Param('id') id: string, @Body() updateNotificationDto: any) {
     const response = await axios.patch(
       `${this.catalogServiceUrl}/${id}`,
-      updateCatalogDto,
+      updateNotificationDto,
     );
     return response.data;
   }
