@@ -3,7 +3,7 @@ import axios from 'axios';
 
 @Controller('order')
 export class OrderController {
-  private readonly catalogServiceUrl = 'http://ms-order:3000/order';
+  private readonly catalogServiceUrl = 'http://ms-order:3002/order';
 
   @Post()
   async create(@Body() order: any): Promise<any> {
