@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { trace } from '@opentelemetry/api';
-import { extractOtelContext } from '../../../../infra/tracing-utils';
+import { extractOtelContext } from '../../../../@shared/infra/tracing-utils';
 import { MetricService } from '../metric/metric.service';
 import { AuthService } from './auth.service';
 

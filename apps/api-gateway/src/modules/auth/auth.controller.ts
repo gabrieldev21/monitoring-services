@@ -2,7 +2,7 @@ import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Response } from 'express';
 import { firstValueFrom } from 'rxjs';
-import { injectOtelContext } from '../../../../infra/tracing-utils';
+import { injectOtelContext } from '../../../../@shared/infra/tracing-utils';
 
 @Controller('auth')
 export class AuthController {
