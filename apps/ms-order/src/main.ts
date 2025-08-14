@@ -1,4 +1,4 @@
-import tracing from '../../infra/otel-sdk';
+import tracing from '../../@shared/infra/otel-sdk';
 import { NestFactory } from '@nestjs/core';
 import { OrderModule } from './modules/order/order.module';
 
