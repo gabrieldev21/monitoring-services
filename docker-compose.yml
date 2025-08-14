@@ -9,10 +9,6 @@ services:
     container_name: api-gateway
     ports:
       - '3000:3000'
-    depends_on:
-      - prometheus
-      - ms-auth
-      - otel-collector
     environment:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
@@ -45,9 +41,6 @@ services:
     container_name: ms-auth
     ports:
       - '3001:3001'
-    depends_on:
-      - prometheus
-      - otel-collector
     environment:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
@@ -66,9 +59,6 @@ services:
     container_name: ms-catalog
     ports:
       - '3002:3002'
-    depends_on:
-      - prometheus
-      - otel-collector
     environment:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
@@ -87,9 +77,6 @@ services:
     container_name: ms-notification
     ports:
       - '3003:3003'
-    depends_on:
-      - prometheus
-      - otel-collector
     environment:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
@@ -108,9 +95,6 @@ services:
     container_name: ms-order
     ports:
       - '3004:3004'
-    depends_on:
-      - prometheus
-      - otel-collector
     environment:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
