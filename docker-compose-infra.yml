@@ -56,6 +56,19 @@ services:
       - jaeger
       - otel-collector
 
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: tccdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+
 networks:
   default:
     name: mynet
@@ -64,3 +77,4 @@ networks:
 volumes:
   grafana_data:
   prometheus_data:
+  postgres_data:

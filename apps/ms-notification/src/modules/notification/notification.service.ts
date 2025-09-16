@@ -1,53 +1,39 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { Notification } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService {
-  private notifications: Array<{
-    id: number;
-    message: string;
-    type: string;
-    createdAt: Date;
-  }> = [];
-  private idCounter = 1;
+  constructor(
+    @InjectRepository(Notification)
+    private readonly repo: Repository<Notification>,
+  ) {}
 
   create(createNotificationDto: CreateNotificationDto) {
-    const notification = {
-      id: this.idCounter++,
-      message: createNotificationDto.message,
-      type: createNotificationDto.type, // e.g., 'alert', 'info', 'warning'
-      createdAt: new Date(),
-    };
-    this.notifications.push(notification);
-    return notification;
+    const entity = this.repo.create(createNotificationDto);
+    return this.repo.save(entity);
   }
 
   findAll() {
-    // In a lab environment, you might filter by type or recent notifications
-    return this.notifications;
+    return this.repo.find();
   }
 
   findOne(id: number) {
-    return this.notifications.find((n) => n.id === id);
+    return this.repo.findOne({ where: { id } });
   }
 
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    const notification = this.notifications.find((n) => n.id === id);
-    if (notification) {
-      notification.message =
-        updateNotificationDto.message ?? notification.message;
-      notification.type = updateNotificationDto.type ?? notification.type;
-      return notification;
-    }
-    return null;
+  async update(id: number, updateNotificationDto: UpdateNotificationDto) {
+    await this.repo.update({ id }, updateNotificationDto);
+    return this.repo.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    const index = this.notifications.findIndex((n) => n.id === id);
-    if (index !== -1) {
-      return this.notifications.splice(index, 1)[0];
-    }
-    return null;
+  async remove(id: number) {
+    const existing = await this.repo.findOne({ where: { id } });
+    if (!existing) return null;
+    await this.repo.delete({ id });
+    return existing;
   }
 }

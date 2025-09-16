@@ -1,45 +1,39 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateCatalogDto } from './dto/create-catalog.dto';
 import { UpdateCatalogDto } from './dto/update-catalog.dto';
 import { Catalog } from './entities/catalog.entity';
 
 @Injectable()
 export class CatalogService {
-  private catalogs: Catalog[] = [];
+  constructor(
+    @InjectRepository(Catalog)
+    private readonly repo: Repository<Catalog>,
+  ) {}
 
   create(createCatalogDto: CreateCatalogDto) {
-    const newCatalog = { id: Date.now(), ...createCatalogDto };
-    this.catalogs.push(newCatalog);
-    return newCatalog;
+    const entity = this.repo.create(createCatalogDto as any);
+    return this.repo.save(entity);
   }
 
   findAll() {
-    return this.catalogs;
+    return this.repo.find();
   }
 
   findOne(id: number) {
-    return this.catalogs.find((catalog) => catalog.id === id);
+    return this.repo.findOne({ where: { id } });
   }
 
-  update(id: number, updateCatalogDto: UpdateCatalogDto) {
-    const catalogIndex = this.catalogs.findIndex(
-      (catalog) => catalog.id === id,
-    );
-    if (catalogIndex === -1) return null;
-    this.catalogs[catalogIndex] = {
-      ...this.catalogs[catalogIndex],
-      ...updateCatalogDto,
-    };
-
-    return this.catalogs[catalogIndex];
+  async update(id: number, updateCatalogDto: UpdateCatalogDto) {
+    await this.repo.update({ id }, updateCatalogDto as any);
+    return this.repo.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    const catalogIndex = this.catalogs.findIndex(
-      (catalog) => catalog.id === id,
-    );
-    if (catalogIndex === -1) return null;
-    const removed = this.catalogs.splice(catalogIndex, 1);
-    return removed[0];
+  async remove(id: number) {
+    const existing = await this.repo.findOne({ where: { id } });
+    if (!existing) return null;
+    await this.repo.delete({ id });
+    return existing;
   }
 }
