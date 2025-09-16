@@ -1,12 +1,37 @@
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { FastifyOtelInstrumentation } from '@fastify/otel';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 
-const otelSDK = new NodeSDK({
-  serviceName: process.env.SERVICE_NAME || 'api-gateway',
-  traceExporter: new OTLPTraceExporter({
-    url: process.env.OTEL_EXPORTER_OTLP_TRACES_URL ?? 'http://localhost:4317',
-  }),
+import { CompressionAlgorithm } from '@opentelemetry/otlp-exporter-base';
+
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR);
+
+const options = {
+  url: 'http://opentelemetry-collector:4317',
+  compression: CompressionAlgorithm.GZIP,
+};
+const metricExporter = new OTLPMetricExporter(options);
+
+const traceExporter = new OTLPTraceExporter(options);
+
+const metricReader = new PeriodicExportingMetricReader({
+  exporter: metricExporter,
+  // exporter: new ConsoleMetricExporter(),
+  exportIntervalMillis: Number(5000),
+  exportTimeoutMillis: Number(5000),
+});
+
+const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
+  registerOnInitialization: true,
+});
+const sdk = new NodeSDK({
+  serviceName: process.env.SERVICE_NAME ?? 'unknown_service',
+  metricReader,
+  traceExporter,
   instrumentations: [
     getNodeAutoInstrumentations({
       '@opentelemetry/instrumentation-http': {
@@ -22,17 +47,14 @@ const otelSDK = new NodeSDK({
         enabled: false,
       },
     }),
+    fastifyOtelInstrumentation,
   ],
 });
 
-process.on('SIGTERM', () => {
-  otelSDK
-    .shutdown()
-    .then(
-      () => console.log('SDK shut down successfully'),
-      (err) => console.log('Error shutting down SDK', err),
-    )
-    .finally(() => process.exit(0));
+process.on('beforeExit', async () => {
+  await sdk.shutdown();
 });
 
-export default otelSDK;
+sdk.start();
+
+export {};
