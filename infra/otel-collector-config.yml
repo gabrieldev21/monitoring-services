@@ -10,6 +10,10 @@ exporters:
   prometheus:
     endpoint: 0.0.0.0:8889
     send_timestamps: true
+  otlp:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
 
 processors:
   batch:
@@ -24,7 +28,7 @@ extensions:
     endpoint: 0.0.0.0:55679
 
 service:
-  extensions: [zpages] # Enable zpages
+  extensions: [zpages]
   pipelines:
     metrics:
       receivers: [otlp]
@@ -33,5 +37,4 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      # exporters: [otlp]
-      exporters: [debug]
+      exporters: [debug, otlp]
