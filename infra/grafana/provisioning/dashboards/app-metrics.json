@@ -31,7 +31,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -107,7 +107,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(http_server_duration_milliseconds_sum{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\"}[$__rate_interval])) by (env, http_route, http_method) /\navg(rate(http_server_duration_milliseconds_count{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\"}[$__rate_interval])) by (env, http_route, http_method)",
@@ -123,7 +123,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "prometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -175,7 +175,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -193,7 +193,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "prometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -245,7 +245,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -263,7 +263,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -341,7 +341,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "(sum(rate(http_server_duration_milliseconds_count{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\"}[$__rate_interval])) by (agent, http_route, http_method)) * $__interval_ms / 1000",
@@ -358,7 +358,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -681,7 +681,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -696,7 +696,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -712,7 +712,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -728,7 +728,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -744,7 +744,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -760,7 +760,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -776,7 +776,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -958,7 +958,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1036,10 +1036,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(increase(http_server_duration_milliseconds_count{env=~\"${env}\", job=~\"${Job}\", path=~\"${route}\", method=~\"${http_method}\", status_code=~\"4xx|5xx\"}[$__rate_interval])) by (agent, job, path, method)",
+          "expr": "sum(increase(http_server_duration_milliseconds_count{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\", http_status_code=~\"4..|5..\"}[$__rate_interval])) by (env, http_method, http_route)",
           "hide": false,
           "legendFormat": "{{env}} {{method}} {{path}}",
           "range": true,
@@ -1070,7 +1070,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "Prometheus"
+          "uid": "prometheus"
         },
         "definition": "label_values(env)",
         "hide": 0,
@@ -1097,7 +1097,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "Prometheus"
+          "uid": "prometheus"
         },
         "definition": "label_values(http_route)",
         "hide": 0,
@@ -1123,7 +1123,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "Prometheus"
+          "uid": "prometheus"
         },
         "definition": "label_values(http_method)",
         "hide": 0,

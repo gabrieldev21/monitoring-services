@@ -33,7 +33,17 @@ const sdk = new NodeSDK({
   metricReader,
   traceExporter,
   instrumentations: [
-    getNodeAutoInstrumentations({}),
+    getNodeAutoInstrumentations({
+      '@opentelemetry/instrumentation-http': {
+        ignoreIncomingRequestHook: (req) =>
+          req.url?.includes('/health') ?? false,
+      },
+      '@opentelemetry/instrumentation-express': {
+        enabled: true,
+      },
+      '@opentelemetry/instrumentation-nestjs-core': {},
+      '@opentelemetry/instrumentation-net': { enabled: false },
+    }),
     fastifyOtelInstrumentation,
   ],
 });
