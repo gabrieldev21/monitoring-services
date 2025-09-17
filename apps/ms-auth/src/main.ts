@@ -1,11 +1,9 @@
-import tracing from '../../@shared/infra/otel-sdk';
+import '../../@shared/infra/otel-sdk';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  tracing.start();
-
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
