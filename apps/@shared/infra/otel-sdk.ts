@@ -67,9 +67,24 @@ const sdk = new NodeSDK({
   ],
 });
 
-process.on('beforeExit', async () => {
-  await sdk.shutdown();
-  await loggerProvider.shutdown();
+process.on('SIGTERM', async () => {
+  try {
+    await sdk.shutdown();
+    await loggerProvider.shutdown();
+    process.exit(0);
+  } catch {
+    process.exit(1);
+  }
+});
+
+process.on('SIGINT', async () => {
+  try {
+    await sdk.shutdown();
+    await loggerProvider.shutdown();
+    process.exit(0);
+  } catch {
+    process.exit(1);
+  }
 });
 
 sdk.start();
