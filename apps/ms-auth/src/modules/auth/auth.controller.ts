@@ -4,7 +4,7 @@ import { CreateUserDto } from '../../../../@shared/DTO/auth/DTO/create-user.dto'
 import { ValidateUserDto } from '../../../../@shared/DTO/auth/DTO/validate-user.dto';
 import { RefreshLoginDto } from '../../../../@shared/DTO/auth/DTO/refresh-login.dto';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 

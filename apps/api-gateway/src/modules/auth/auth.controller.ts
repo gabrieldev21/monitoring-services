@@ -7,7 +7,7 @@ import { RefreshLoginDto } from 'apps/@shared/DTO/auth/DTO/refresh-login.dto';
 
 @Controller('auth')
 export class AuthController {
-  private msAuthUrl = process.env.MS_AUTH_URL || 'http://ms-auth:3001/auth';
+  private msAuthUrl = process.env.MS_AUTH_URL || 'http://ms-auth:3001';
 
   @Public()
   @Post('login')

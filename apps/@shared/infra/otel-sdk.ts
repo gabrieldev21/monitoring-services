@@ -19,10 +19,7 @@ const options = {
   url: 'http://opentelemetry-collector:4317',
   compression: CompressionAlgorithm.GZIP,
 };
-// const options = {
-//   url: 'grpc://opentelemetry-collector:4317',
-//   compression: CompressionAlgorithm.GZIP,
-// };
+
 const metricExporter = new OTLPMetricExporter(options);
 const metricReader = new PeriodicExportingMetricReader({
   exporter: metricExporter,
@@ -41,16 +38,15 @@ const loggerProvider = new LoggerProvider({
   forceFlushTimeoutMillis: 3000,
 });
 
-const logger = loggerProvider.getLogger('app-logger');
-logger.emit({ body: 'Hello OTEL logs!' });
-
 const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
   registerOnInitialization: true,
 });
+
 const sdk = new NodeSDK({
   serviceName: process.env.SERVICE_NAME ?? 'unknown_service',
   metricReader,
   traceExporter,
+  logRecordProcessors: [new BatchLogRecordProcessor(logExporter)],
   instrumentations: [
     getNodeAutoInstrumentations({
       '@opentelemetry/instrumentation-http': {
@@ -72,5 +68,8 @@ process.on('beforeExit', async () => {
 });
 
 sdk.start();
+
+const logger = loggerProvider.getLogger('app-logger');
+logger.emit({ body: 'Hello OTEL logs!' });
 
 export {};
