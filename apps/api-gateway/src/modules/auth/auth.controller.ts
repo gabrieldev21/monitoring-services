@@ -1,9 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import axios from 'axios';
 import { Public } from 'apps/@shared/infra/jwt.util';
-import { CreateUserDto } from 'apps/@shared/DTO/auth/DTO/create-user.dto';
-import { ValidateUserDto } from 'apps/@shared/DTO/auth/DTO/validate-user.dto';
-import { RefreshLoginDto } from 'apps/@shared/DTO/auth/DTO/refresh-login.dto';
+import { CreateUserDto } from 'apps/@shared/DTO/auth/create-user.dto';
+import { ValidateUserDto } from 'apps/@shared/DTO/auth/validate-user.dto';
+import { RefreshLoginDto } from 'apps/@shared/DTO/auth/refresh-login.dto';
 
 @Controller('auth')
 export class AuthController {
