@@ -1,0 +1,33 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 10
+      arrivalRate: 5
+  defaults:
+    headers:
+      content-type: application/json
+
+scenarios:
+  - name: Order create and fetch
+    flow:
+      # Create order
+      - post:
+          url: '/order'
+          json:
+            productId: '1'
+            quantity: 2
+          capture:
+            - json: $.id
+              as: orderId
+          expect:
+            - statusCode: 201
+      # List orders
+      - get:
+          url: '/order'
+          expect:
+            - statusCode: 200
+      # Get by id
+      - get:
+          url: '/order/{{ orderId }}'
+          expect:
+            - statusCode: 200
