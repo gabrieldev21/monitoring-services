@@ -1,11 +1,11 @@
 import '../../@shared/infra/otel-sdk';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './modules/app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { AuthModule } from './modules/auth/auth.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
+    AuthModule,
     {
       transport: Transport.TCP,
       options: {
