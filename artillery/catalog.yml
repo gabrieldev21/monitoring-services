@@ -32,5 +32,6 @@ scenarios:
             Authorization: 'Bearer {{ accessToken }}'
           json:
             name: 'Produto Teste 5'
+            price: 120
           expect:
             - statusCode: 201
