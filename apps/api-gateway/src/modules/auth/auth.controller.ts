@@ -7,26 +7,30 @@ import { RefreshLoginDto } from 'apps/@shared/DTO/auth/refresh-login.dto';
 
 @Controller('auth')
 export class AuthController {
-  private msAuthUrl = process.env.MS_AUTH_URL || 'http://ms-auth:3001';
-
   @Public()
   @Post('login')
   async login(@Body() body: ValidateUserDto) {
-    const { data } = await axios.post(`${this.msAuthUrl}/login`, body);
+    const { data } = await axios.post(`${process.env.MS_AUTH_URL}/login`, body);
     return data;
   }
 
   @Public()
   @Post('register')
   async register(@Body() body: CreateUserDto) {
-    const { data } = await axios.post(`${this.msAuthUrl}/register`, body);
+    const { data } = await axios.post(
+      `${process.env.MS_AUTH_URL}/register`,
+      body,
+    );
     return data;
   }
 
   @Public()
   @Post('refresh')
   async refresh(@Body() body: RefreshLoginDto) {
-    const { data } = await axios.post(`${this.msAuthUrl}/refresh`, body);
+    const { data } = await axios.post(
+      `${process.env.MS_AUTH_URL}/refresh`,
+      body,
+    );
     return data;
   }
 }
