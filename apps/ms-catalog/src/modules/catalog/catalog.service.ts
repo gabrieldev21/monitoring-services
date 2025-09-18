@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateCatalogDto } from './dto/create-catalog.dto';
-import { UpdateCatalogDto } from './dto/update-catalog.dto';
+import { CreateCatalogDto } from '../../../../@shared/DTO/catalog/create-catalog.dto';
+import { UpdateCatalogDto } from '../../../../@shared/DTO/catalog/update-catalog.dto';
 import { Catalog } from './entities/catalog.entity';
 import axios from 'axios';
 

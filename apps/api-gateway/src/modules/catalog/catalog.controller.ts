@@ -8,6 +8,7 @@ import {
   Param,
   Headers,
 } from '@nestjs/common';
+import { CreateCatalogDto } from 'apps/@shared/DTO/catalog/create-catalog.dto';
 import axios from 'axios';
 
 @Controller('catalog')
@@ -16,7 +17,7 @@ export class CatalogController {
 
   @Post()
   async create(
-    @Body() createCatalogDto: any,
+    @Body() createCatalogDto: CreateCatalogDto,
     @Headers('authorization') auth?: string,
   ) {
     const response = await axios.post(
