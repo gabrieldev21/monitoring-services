@@ -1,0 +1,44 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 10
+      arrivalRate: 5
+  defaults:
+    headers:
+      content-type: application/json
+
+scenarios:
+  - name: Notification CRUD flow
+    flow:
+      # Create notification
+      - post:
+          url: '/notification'
+          json:
+            message: 'Nova notificação'
+          capture:
+            - json: $.id
+              as: notificationId
+          expect:
+            - statusCode: 201
+      # List notifications
+      - get:
+          url: '/notification'
+          expect:
+            - statusCode: 200
+      # Get by id
+      - get:
+          url: '/notification/{{ notificationId }}'
+          expect:
+            - statusCode: 200
+      # Update
+      - patch:
+          url: '/notification/{{ notificationId }}'
+          json:
+            message: 'Notificação atualizada'
+          expect:
+            - statusCode: 200
+      # Delete
+      - delete:
+          url: '/notification/{{ notificationId }}'
+          expect:
+            - statusCode: 200

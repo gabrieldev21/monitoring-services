@@ -1,0 +1,22 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 10
+      arrivalRate: 5
+  defaults:
+    headers:
+      content-type: application/json
+
+scenarios:
+  - name: Auth validate and metrics
+    flow:
+      - post:
+          url: '/auth/validate'
+          json:
+            userId: '123'
+          expect:
+            - statusCode: 200
+      - get:
+          url: '/auth/metrics'
+          expect:
+            - statusCode: 200
