@@ -10,6 +10,7 @@ import {
   BatchLogRecordProcessor,
   LoggerProvider,
 } from '@opentelemetry/sdk-logs';
+import { logs } from '@opentelemetry/api-logs';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { CompressionAlgorithm } from '@opentelemetry/otlp-exporter-base';
 
@@ -38,6 +39,11 @@ const loggerProvider = new LoggerProvider({
   forceFlushTimeoutMillis: 3000,
 });
 
+logs.setGlobalLoggerProvider(loggerProvider);
+
+const logger = loggerProvider.getLogger('app-logger');
+logger.emit({ body: 'Hello OTEL logs!' });
+
 const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
   registerOnInitialization: true,
 });
@@ -46,7 +52,6 @@ const sdk = new NodeSDK({
   serviceName: process.env.SERVICE_NAME ?? 'unknown_service',
   metricReader,
   traceExporter,
-  logRecordProcessors: [new BatchLogRecordProcessor(logExporter)],
   instrumentations: [
     getNodeAutoInstrumentations({
       '@opentelemetry/instrumentation-http': {
@@ -65,11 +70,9 @@ const sdk = new NodeSDK({
 
 process.on('beforeExit', async () => {
   await sdk.shutdown();
+  await loggerProvider.shutdown();
 });
 
 sdk.start();
-
-const logger = loggerProvider.getLogger('app-logger');
-logger.emit({ body: 'Hello OTEL logs!' });
 
 export {};
