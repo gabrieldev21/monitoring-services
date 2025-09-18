@@ -1,8 +1,6 @@
 services:
   api-gateway:
     build:
-      context: .
-      dockerfile: Dockerfile
       args:
         APP_NAME: api-gateway
     image: api-gateway:latest
@@ -32,8 +30,6 @@ services:
 
   ms-auth:
     build:
-      context: .
-      dockerfile: Dockerfile
       args:
         APP_NAME: ms-auth
     image: ms-auth:latest
@@ -48,8 +44,6 @@ services:
 
   ms-catalog:
     build:
-      context: .
-      dockerfile: Dockerfile
       args:
         APP_NAME: ms-catalog
     image: ms-catalog:latest
@@ -64,8 +58,6 @@ services:
 
   ms-notification:
     build:
-      context: .
-      dockerfile: Dockerfile
       args:
         APP_NAME: ms-notification
     image: ms-notification:latest
@@ -80,8 +72,6 @@ services:
 
   ms-order:
     build:
-      context: .
-      dockerfile: Dockerfile
       args:
         APP_NAME: ms-order
     image: ms-order:latest
