@@ -6,28 +6,50 @@ config:
   defaults:
     headers:
       content-type: application/json
+  variables:
+    email: 'user@example.com'
+    password: 'secret123'
 
 scenarios:
   - name: Order create and fetch
     flow:
-      # Create order
+      # Login
+      - post:
+          url: '/auth/login'
+          json:
+            email: '{{ email }}'
+            password: '{{ password }}'
+          capture:
+            - json: $.accessToken
+              as: accessToken
+          expect:
+            - statusCode: 201
+
+      # Create order (protected)
       - post:
           url: '/order'
+          headers:
+            Authorization: 'Bearer {{ accessToken }}'
           json:
-            productId: '1'
-            quantity: 2
+            productIds: [1]
           capture:
             - json: $.id
               as: orderId
           expect:
             - statusCode: 201
-      # List orders
+
+      # List orders (protected)
       - get:
           url: '/order'
+          headers:
+            Authorization: 'Bearer {{ accessToken }}'
           expect:
             - statusCode: 200
-      # Get by id
+
+      # Get by id (protected)
       - get:
           url: '/order/{{ orderId }}'
+          headers:
+            Authorization: 'Bearer {{ accessToken }}'
           expect:
             - statusCode: 200

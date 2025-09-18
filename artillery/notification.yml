@@ -6,39 +6,51 @@ config:
   defaults:
     headers:
       content-type: application/json
+  variables:
+    email: 'user@example.com'
+    password: 'secret123'
 
 scenarios:
-  - name: Notification CRUD flow
+  - name: Notification create and get
     flow:
-      # Create notification
+      # Login to get access token
+      - post:
+          url: '/auth/login'
+          json:
+            email: '{{ email }}'
+            password: '{{ password }}'
+          capture:
+            - json: $.accessToken
+              as: accessToken
+          expect:
+            - statusCode: 201
+
+      # Create notification (protected)
       - post:
           url: '/notification'
+          headers:
+            Authorization: 'Bearer {{ accessToken }}'
           json:
+            type: 'generic'
             message: 'Nova notificação'
           capture:
             - json: $.id
               as: notificationId
           expect:
             - statusCode: 201
-      # List notifications
+
+      # List notifications (protected)
       - get:
           url: '/notification'
+          headers:
+            Authorization: 'Bearer {{ accessToken }}'
           expect:
             - statusCode: 200
-      # Get by id
+
+      # Get by id (protected)
       - get:
           url: '/notification/{{ notificationId }}'
-          expect:
-            - statusCode: 200
-      # Update
-      - patch:
-          url: '/notification/{{ notificationId }}'
-          json:
-            message: 'Notificação atualizada'
-          expect:
-            - statusCode: 200
-      # Delete
-      - delete:
-          url: '/notification/{{ notificationId }}'
+          headers:
+            Authorization: 'Bearer {{ accessToken }}'
           expect:
             - statusCode: 200

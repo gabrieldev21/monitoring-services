@@ -6,12 +6,30 @@ config:
   defaults:
     headers:
       content-type: application/json
+  variables:
+    email: 'user@example.com'
+    password: 'secret123'
 
 scenarios:
-  - name: Create catalog item
+  - name: Auth then create catalog
     flow:
+      # Login para obter accessToken
+      - post:
+          url: '/auth/login'
+          json:
+            email: '{{ email }}'
+            password: '{{ password }}'
+          capture:
+            - json: $.accessToken
+              as: accessToken
+          expect:
+            - statusCode: 201
+
+      # Criar item de catálogo com Authorization
       - post:
           url: '/catalog'
+          headers:
+            Authorization: 'Bearer {{ accessToken }}'
           json:
             name: 'Produto Teste 5'
           expect:

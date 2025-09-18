@@ -6,17 +6,22 @@ config:
   defaults:
     headers:
       content-type: application/json
+  variables:
+    email: 'user@example.com'
+    password: 'secret123'
 
 scenarios:
-  - name: Auth validate and metrics
+  - name: Auth login
     flow:
       - post:
-          url: '/auth/validate'
+          url: '/auth/login'
           json:
-            userId: '123'
+            email: '{{ email }}'
+            password: '{{ password }}'
+          capture:
+            - json: $.accessToken
+              as: accessToken
+            - json: $.refreshToken
+              as: refreshToken
           expect:
-            - statusCode: 200
-      - get:
-          url: '/auth/metrics'
-          expect:
-            - statusCode: 200
+            - statusCode: 201
