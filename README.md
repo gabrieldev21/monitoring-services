@@ -1,12 +1,12 @@
 ## Monitoring Services — Microsserviços com Observabilidade (TCC)
 
-Projeto de estudo/TCC focado em Monitoramento e Observabilidade em Microsserviços Node.js utilizando ferramentas open source: OpenTelemetry, Prometheus, Grafana e Jaeger.
+Projeto de estudo/TCC focado em Monitoramento e Observabilidade em microsserviços Node.js/NestJS com OpenTelemetry, Prometheus, Grafana, Jaeger e Loki.
 
-Este repositório implementa uma arquitetura com:
+Stack implementada:
 
 - API Gateway (HTTP)
-- Microsserviços: ms-auth (TCP/Nest Microservices), ms-catalog (HTTP), ms-order (HTTP), ms-notification (HTTP)
-- Infra: PostgreSQL, OpenTelemetry Collector, Jaeger, Prometheus, Grafana
+- Microsserviços: ms-auth (HTTP), ms-catalog (HTTP), ms-order (HTTP), ms-notification (HTTP)
+- Infra: PostgreSQL, OpenTelemetry Collector, Jaeger, Prometheus, Grafana, Loki
 
 ## Sumário
 
@@ -14,11 +14,11 @@ Este repositório implementa uma arquitetura com:
 - Arquitetura e Serviços
 - Tecnologias
 - Como executar (Docker)
-- Endpoints principais (API Gateway)
-- Observabilidade (Métricas, Traces, Dashboards)
-- Postman Collection
+- Autenticação (JWT) e uso das rotas
+- Endpoints (API Gateway)
+- Observabilidade (Traces, Métricas, Logs)
 - Variáveis de ambiente e portas
-- Notas e limitações conhecidas
+- Notas
 - Licença
 
 ## Sobre o projeto
@@ -26,79 +26,49 @@ Este repositório implementa uma arquitetura com:
 O objetivo é demonstrar boas práticas de observabilidade em um ambiente de microsserviços Node.js/NestJS, cobrindo:
 
 - Tracing distribuído com OpenTelemetry (coletado pelo OTel Collector e visualizado no Jaeger)
-- Métricas com Prometheus (exposição via prom-client) e visualização no Grafana
-- Integração entre serviços via API Gateway e transporte TCP (Nest Microservices) para o serviço de autenticação
+- Métricas via OpenTelemetry → OTel Collector → Prometheus → Grafana
+- Logs estruturados via OpenTelemetry → OTel Collector → Loki → Grafana (Explore)
 - Persistência com PostgreSQL (TypeORM)
+- API Gateway centralizando acesso aos serviços
 
 ## Arquitetura e Serviços
 
-Visão geral (simplificada):
-
-```
-┌────────────────┐        HTTP         ┌──────────────────────┐
-│   API Gateway  │  ─────────────────▶ │  ms-catalog (HTTP)   │
-│ (Nest HTTP)    │        HTTP         └──────────────────────┘
-│                │  ─────────────────▶ │  ms-order (HTTP)     │
-│ /auth -> TCP   │        HTTP         └──────────────────────┘
-│ (via Client)   │  ─────────────────▶ │  ms-notification     │
-│                │                      │  (HTTP)             │
-│ /auth/metrics  │ ◀─ TCP (metrics)     └──────────────────────┘
-└────────────────┘        │
-					▲               │
-					│ TCP           ▼
-					│       ┌──────────────────────┐
-					└──────▶│  ms-auth (Nest TCP) │
-									└──────────────────────┘
-
-Infra:
-Prometheus ← scrape /metrics (API Gateway) e /auth/metrics (via Gateway)
-Grafana ← dashboards a partir do Prometheus
-OTel Collector ← recebe OTLP dos serviços e exporta para Jaeger
-Jaeger ← UI de traces distribuídos
-PostgreSQL ← base para ms-catalog, ms-order, ms-notification (TypeORM)
-```
-
-Diretórios principais:
-
-- `apps/api-gateway`: expõe HTTP e roteia chamadas para os microsserviços; integra com ms-auth via TCP
-- `apps/ms-auth`: microsserviço Nest (Transport.TCP) para validação de usuário e métricas via mensagem
+- `apps/api-gateway`: expõe HTTP e roteia chamadas para ms-catalog, ms-order e ms-notification; faz proxy de autenticação para ms-auth
+- `apps/ms-auth`: serviço HTTP para registro/login/refresh e emissão de tokens JWT (HS256)
 - `apps/ms-catalog`, `apps/ms-order`, `apps/ms-notification`: serviços HTTP com TypeORM
-- `apps/@shared/infra`: utilitários de tracing (`otel-sdk.ts`, `tracing-utils.ts`) e configuração TypeORM
+- `apps/@shared/infra`: SDK de OpenTelemetry (`otel-sdk.ts`), logger OTEL, guard e utilitários de JWT
 - `docker-compose.yml`: serviços de aplicação
-- `docker-compose-infra.yml`: stack de observabilidade e banco
+- `docker-compose-infra.yml`: stack de observabilidade (Prometheus, Grafana, Jaeger, OTel Collector, Loki) e banco (Postgres)
 
 ## Tecnologias
 
 - Node.js 20, NestJS 11, TypeScript
-- Nest Microservices (TCP) para ms-auth
 - TypeORM + PostgreSQL
-- OpenTelemetry Node SDK com auto-instrumentations
-- OpenTelemetry Collector (OTLP gRPC/HTTP)
-- Jaeger (traces)
-- Prometheus (scrape de métricas)
-- Grafana (dashboards)
+- OpenTelemetry Node SDK (traces, métricas e logs via OTLP gRPC)
+- OpenTelemetry Collector (pipelines: traces → Jaeger, métricas → Prometheus, logs → Loki)
+- Jaeger (UI de traces)
+- Prometheus (coleta de métricas do Collector)
+- Grafana (dashboards e Explore para logs)
 - Docker e Docker Compose
 - pnpm (gerenciador de pacotes)
 
 ## Como executar (Docker)
 
-Pré-requisitos:
+Pré-requisitos: Docker e Docker Compose v2
 
-- Docker e Docker Compose v2
-
-1. Criar a rede externa (usada pelos dois compose):
+1. Crie a rede compartilhada entre os dois compose:
 
 ```powershell
 docker network create mynet
 ```
 
-2. Subir a infraestrutura (Prometheus, Grafana, Jaeger, OTel Collector, Postgres):
+2. Suba a infraestrutura (Prometheus, Grafana, Jaeger, OTel Collector, Loki, Postgres):
 
 ```powershell
 docker compose -f docker-compose-infra.yml up -d --build
 ```
 
-3. Subir os serviços de aplicação:
+3. Suba os serviços de aplicação:
 
 ```powershell
 docker compose up -d --build
@@ -108,150 +78,121 @@ docker compose up -d --build
 
 - API Gateway: http://localhost:3000
 - Prometheus: http://localhost:9090
-- Grafana: http://localhost:3032 (login padrão admin / admin)
+- Grafana: http://localhost:3032 (anônimo habilitado como Admin)
 - Jaeger UI: http://localhost:8081
+- Loki (API): http://localhost:3100
 - Postgres: localhost:5432 (admin / admin, DB: tccdb)
 
-## Endpoints principais (API Gateway)
+## Autenticação (JWT) e uso das rotas
+
+Há um guard global (`JwtAuthGuard`) no API Gateway. Isso significa que TODAS as rotas exigem Authorization: Bearer <accessToken>, exceto as explicitamente públicas.
+
+Rotas públicas (sem token):
+
+- POST `/auth/register` — body: { email: string, password: string }
+- POST `/auth/login` — body: { email: string, password: string }
+- POST `/auth/refresh` — body: { refreshToken: string }
+- GET `/health`
+
+Fluxo típico:
+
+1. Registre-se ou faça login via `/auth/register` ou `/auth/login`
+2. Você receberá `{ accessToken, refreshToken, user }`
+3. Envie `Authorization: Bearer <accessToken>` para acessar as rotas protegidas (catalog/order/notification)
+4. Quando o accessToken expirar (~15 min), use `/auth/refresh` com o `refreshToken` para obter novos tokens (refresh ~7 dias)
+
+Detalhes do JWT:
+
+- Assinatura HS256, emissor (issuer): `ms-auth`
+- Segredo configurável via `JWT_SECRET` (padrão: `dev-super-secret-change-me`)
+
+Falhas comuns: sem header ou token inválido retornam 401 com mensagens "Missing token" ou "Invalid token".
+
+## Endpoints (API Gateway)
 
 Base URL: `http://localhost:3000`
 
-- Saúde e métricas do Gateway
-  - GET `/metrics` → expõe métricas Prometheus do Gateway
-  - GET `/metrics/health` → health check simples (incrementa contador)
+- Health
+  - GET `/health` → health check simples
 
-- Auth (via ms-auth por TCP)
-  - POST `/auth/validate` → validação de usuário (gera trace e métrica no ms-auth)
-  - GET `/auth/metrics` → expõe métricas do ms-auth (proxy via mensagem)
+- Auth (proxy para ms-auth)
+  - POST `/auth/register` (Public)
+  - POST `/auth/login` (Public)
+  - POST `/auth/refresh` (Public)
 
-- Catálogo (HTTP → ms-catalog)
+- Catálogo (PROTEGIDO)
   - POST `/catalog`
   - GET `/catalog`
   - GET `/catalog/:id`
   - PATCH `/catalog/:id`
   - DELETE `/catalog/:id`
 
-- Pedidos (HTTP → ms-order)
+- Pedidos (PROTEGIDO)
   - POST `/order`
   - GET `/order`
   - GET `/order/:id`
 
-- Notificações (HTTP → ms-notification)
+- Notificações (PROTEGIDO)
   - POST `/notification`
   - GET `/notification`
   - GET `/notification/:id`
   - PATCH `/notification/:id`
   - DELETE `/notification/:id`
 
-Você pode importar a collection Postman em `collection/collection.json` e usar a variável `{{baseUrl}} = http://localhost:3000`.
+Collection Postman: `collection/collection.json` (defina `{{baseUrl}} = http://localhost:3000` e configure o header Authorization com o accessToken após login/registro).
 
-## Observabilidade
+## Observabilidade (Traces, Métricas, Logs)
 
-Tracing distribuído (OpenTelemetry → Collector → Jaeger)
+Traces (OpenTelemetry → Collector → Jaeger)
 
-- Cada aplicação inicia o SDK com `apps/@shared/infra/otel-sdk.ts`
-- Exportador OTLP gRPC envia spans para o Collector (`OTEL_EXPORTER_OTLP_TRACES_URL`)
-- O Collector reenvia para o Jaeger (gRPC)
-- Acesse o Jaeger: http://localhost:8081 e filtre pelo service (ex.: `api-gateway`, `ms-auth` etc.)
+- SDK inicializado em cada app via `apps/@shared/infra/otel-sdk.ts`
+- Exportador OTLP gRPC envia spans para o Collector (gRPC 4317)
+- Collector exporta para Jaeger (gRPC)
+- Acesse Jaeger: http://localhost:8081 e filtre por serviço (ex.: `api-gateway`, `ms-auth`, etc.)
 
-Métricas (Prometheus → Grafana)
+Métricas (OpenTelemetry → Collector → Prometheus → Grafana)
 
-- API Gateway expõe `/metrics` (Prometheus scrape)
-- ms-auth expõe métricas indiretamente via `/auth/metrics` no Gateway
-- Arquivo `prometheus.yml` já contém jobs:
-  - `api-gateway` → `api-gateway:3000/metrics`
-  - `ms-auth` → `api-gateway:3000/auth/metrics`
-- Acesse Prometheus (http://localhost:9090) para explorar métricas
-- Acesse Grafana (http://localhost:3032) e adicione Prometheus como data source (URL: http://prometheus:9090)
+- As aplicações enviam métricas via OTLP gRPC para o Collector
+- O Collector expõe métricas no endpoint Prometheus em `opentelemetry-collector:8889`
+- O `infra/prometheus.yaml` já faz scrape de `opentelemetry-collector:8889` (não há endpoints `/metrics` nos apps)
+- Grafana já está provisionado com data source Prometheus (`http://prometheus:9090`)
 
-Exemplos de métricas customizadas
+Logs (OpenTelemetry → Collector → Loki → Grafana)
 
-- API Gateway: `http_api_gateway_requests_total{httpStatus="200"}` (incrementada no health)
-- ms-auth (TCP): `tcp_ms_auth_requests_total{httpStatus="200"}` (incrementada ao validar usuário)
+- As aplicações emitem logs estruturados via `OtelLogger` (OpenTelemetry Logs API)
+- O Collector exporta logs para o Loki em `http://loki:3100`
+- Para explorar logs no Grafana: abra "Explore", selecione o data source Loki (se necessário, adicione-o em Connections → Data sources, URL `http://loki:3100`) e filtre pelos campos/atributos do log (inclui atributos de recurso como `service.name`)
 
 ## Variáveis de ambiente e portas
 
-Serviços de aplicação (docker-compose.yml):
+Aplicações (docker-compose.yml):
 
-- `SERVICE_NAME`: identifica o serviço para o tracer
-- `OTEL_EXPORTER_OTLP_TRACES_URL`: URL OTLP gRPC (padrão: `http://otel-collector:4317` dentro do Docker)
-- `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`: endpoint OTLP HTTP (Collector) — presente para compatibilidade
-- `PROMETHEUS_URL`: referência/variável informativa usada no projeto
+- `SERVICE_NAME`: nome do serviço (usado na Resource dos traces/logs/métricas)
+- `MS_AUTH_URL`: URL interna do ms-auth (padrão: `http://ms-auth:3001`)
+- `JWT_SECRET`: segredo para assinar/verificar os tokens JWT (HS256)
+- OTEL (gRPC): Collector em `http://opentelemetry-collector:4317`
 
-Portas internas (aplicações):
+Portas (host → container):
 
-- API Gateway (HTTP): 3000
-- ms-auth (Nest Microservices TCP): 3001
-- ms-order (HTTP): 3002
-- ms-catalog (HTTP): 3003
-- ms-notification (HTTP): 3004
+- API Gateway: 3000 → 3000
+- ms-auth: 3001 → 3001 (HTTP)
+- ms-order: 3004 → 3004 (o serviço escuta 3002; o mapeamento de host é opcional e não é usado pelo Gateway)
+- ms-catalog: 3002 → 3002 (o serviço escuta 3003; idem observação)
+- ms-notification: 3003 → 3003 (o serviço escuta 3004; idem observação)
 - Prometheus: 9090 → 9090
 - Grafana: 3032 → 3000
 - Jaeger UI: 8081 → 16686
-- OTel Collector: 4317 (gRPC), 4318 (HTTP)
+- Loki: 3100 → 3100
+- OTel Collector: 4317 (gRPC), 8889 (Prometheus exporter)
 - Postgres: 5432 → 5432
 
-## Notas e limitações conhecidas
+Obs.: O API Gateway se comunica com os serviços pelo DNS interno do Docker (ex.: `http://ms-order:3002`). Os mapeamentos de portas dos microsserviços para o host são opcionais e apenas úteis para testes diretos a partir do host. Caso precise acessá-los diretamente, ajuste os mapeamentos para refletirem as portas internas reais de cada app.
 
-- Healthcheck do API Gateway: no `docker-compose.yml`, o healthcheck aponta para `/health`, mas o endpoint existente é `/metrics/health`. Recomenda-se ajustar o healthcheck para `http://0.0.0.0:3000/metrics/health`.
-- Mapeamento de portas no docker-compose: as portas mapeadas atualmente são `ms-catalog: 3002:3002`, `ms-notification: 3003:3003`, `ms-order: 3004:3004`, porém as aplicações escutam internamente em `ms-catalog:3003`, `ms-notification:3004`, `ms-order:3002`. Para acesso via host diretamente a esses serviços, ajuste os mapeamentos para refletirem as portas internas corretas (ex.: `ms-catalog: 3003:3003`). Comunicação entre containers via DNS (ex.: `http://ms-catalog:3003`) segue funcionando.
-- Execução local (fora do Docker): a configuração TypeORM (`apps/@shared/infra/typeorm.config.ts`) usa host `postgres` (nome do serviço Docker). Para rodar fora do Docker, ajuste para `localhost` ou utilize variáveis de ambiente/config específica.
-- ms-auth usa Nest Microservices (TCP). Não há endpoints HTTP nesse serviço; todo acesso é via Gateway.
-- Segurança/autenticação: fora do escopo deste estudo. Endpoints expostos sem autenticação.
+## Notas
+
+- Healthcheck do API Gateway: `docker-compose.yml` aponta para `/health` (conforme implementado em `apps/api-gateway/src/main.ts`).
+- Execução local fora do Docker: a configuração TypeORM usa host `postgres`. Altere para `localhost` quando rodar apps localmente, ou mantenha o banco no Docker.
 
 ## Licença
 
 Este projeto está licenciado sob a licença MIT — veja `LICENSE` para detalhes.
-
-## Como executar local (sem Docker) — opcional
-
-Observação: para ter observabilidade completa sem ajustes de configuração, recomenda-se usar Docker para os apps. A execução local é útil para desenvolvimento rápido, mas pode exigir ajustes.
-
-1. Instale dependências:
-
-```powershell
-pnpm install
-```
-
-2. Suba apenas a infraestrutura (mantendo apps locais):
-
-```powershell
-docker compose -f docker-compose-infra.yml up -d
-```
-
-3. Rode os serviços localmente em terminais separados:
-
-```powershell
-# API Gateway
-pnpm exec nest start api-gateway --watch
-
-# ms-auth (TCP)
-pnpm exec nest start ms-auth --watch
-
-# ms-catalog
-pnpm exec nest start ms-catalog --watch
-
-# ms-order
-pnpm exec nest start ms-order --watch
-
-# ms-notification
-pnpm exec nest start ms-notification --watch
-```
-
-4. Acesse o Gateway em http://localhost:3000
-
-Notas para execução local:
-
-- TypeORM está configurado com host `postgres` (nome do serviço Docker). Para rodar apps fora do Docker, altere `apps/@shared/infra/typeorm.config.ts` para `localhost` ou crie uma estratégia de configuração por ambiente.
-- Prometheus (em Docker) não enxerga serviços executando no host via `localhost`. Você pode ajustar `prometheus.yml` para usar `host.docker.internal:3000` (Windows/Mac) quando rodar o Gateway localmente, ou preferir executar os apps dentro do Docker para manter a configuração padrão.
-
-## Anexo: comandos úteis (Nest)
-
-Gerar novos apps (histórico do projeto):
-
-```bash
-nest generate app ms-auth
-nest generate app ms-catalog
-nest generate app ms-order
-nest generate app ms-notification
-```
