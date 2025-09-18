@@ -14,9 +14,9 @@ export class OrderService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    const url = 'http://api-gateway:3000/notification';
     const entity = this.repo.create(createOrderDto);
     const saved: Order = await this.repo.save(entity);
+    const url = 'http://ms-notification:3004/notification';
 
     try {
       await axios.post(url, {

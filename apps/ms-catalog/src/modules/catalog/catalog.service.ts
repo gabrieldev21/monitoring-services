@@ -17,7 +17,7 @@ export class CatalogService {
   async create(createCatalogDto: CreateCatalogDto) {
     const entity = this.repo.create(createCatalogDto);
     const saved = await this.repo.save(entity);
-    const url = 'http://api-gateway:3000/notification';
+    const url = 'http://ms-notification:3004/notification';
 
     try {
       await axios.post(url, {
