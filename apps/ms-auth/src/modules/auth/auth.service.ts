@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { getJwtSecret, JWT_ALGORITHM } from 'apps/@shared/infra/jwt-keys';
+import { getJwtSecret, JWT_ALGORITHM } from 'apps/@shared/infra/jwt/jwt-keys';
 import { CreateUserDto } from 'apps/@shared/DTO/auth/create-user.dto';
 import { ValidateUserDto } from 'apps/@shared/DTO/auth/validate-user.dto';
 import { RefreshLoginDto } from 'apps/@shared/DTO/auth/refresh-login.dto';
@@ -17,10 +17,14 @@ export class AuthService {
   ) {}
 
   async register(dto: CreateUserDto) {
-    const existing = await this.repo.findOne({ where: { email: dto.email } });
+    const existing = await this.repo.findOne({
+      where: { email: dto.email },
+    });
+
     if (existing) {
       throw new UnauthorizedException('Email already registered');
     }
+
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = this.repo.create({
       email: dto.email,

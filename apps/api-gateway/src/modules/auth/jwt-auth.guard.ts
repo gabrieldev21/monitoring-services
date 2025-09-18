@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { verifyJwt, IS_PUBLIC_KEY } from 'apps/@shared/infra/jwt.util';
+import { verifyJwt, IS_PUBLIC_KEY } from 'apps/@shared/infra/jwt/jwt.util';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
