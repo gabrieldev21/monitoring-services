@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Response } from 'express';
-import { firstValueFrom } from 'rxjs';
-import { injectOtelContext } from '../../../../@shared/infra/tracing-utils';
+import axios from 'axios';
+import { Public } from './jwt.util';
 
 @Controller('auth')
 export class AuthController {
@@ -10,22 +9,26 @@ export class AuthController {
     @Inject('AUTH_SERVICE') private readonly authService: ClientProxy,
   ) {}
 
-  @Post('validate')
-  async validateUser(@Body() body: any) {
-    const messageData = injectOtelContext({ userId: body.userId });
+  private msAuthUrl = process.env.MS_AUTH_URL || 'http://ms-auth:3011/auth';
 
-    return await this.authService
-      .send({ cmd: 'validate-user' }, messageData)
-      .toPromise();
+  @Public()
+  @Post('login')
+  async login(@Body() body: any) {
+    const { data } = await axios.post(`${this.msAuthUrl}/login`, body);
+    return data;
   }
 
-  @Get('metrics')
-  async metrics(@Res() res: Response) {
-    const response = await firstValueFrom(
-      this.authService.send({ cmd: 'metrics' }, {}),
-    );
+  @Public()
+  @Post('register')
+  async register(@Body() body: any) {
+    const { data } = await axios.post(`${this.msAuthUrl}/register`, body);
+    return data;
+  }
 
-    res.setHeader('Content-Type', 'text/plain');
-    res.send(response.metrics);
+  @Public()
+  @Post('refresh')
+  async refresh(@Body() body: any) {
+    const { data } = await axios.post(`${this.msAuthUrl}/refresh`, body);
+    return data;
   }
 }

@@ -1,36 +1,25 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
-import { trace } from '@opentelemetry/api';
-import { extractOtelContext } from '../../../../@shared/infra/tracing-utils';
-import { MetricService } from '../metric/metric.service';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-@Controller()
+@Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly metricsService: MetricService,
-  ) {}
+  constructor(private readonly service: AuthService) {}
 
-  @MessagePattern('auth')
-  auth() {
-    return this.authService.authenticate();
+  @Post('register')
+  async register(@Body() body: any) {
+    // body: { email, password, name? }
+    return this.service.register(body);
   }
 
-  @MessagePattern({ cmd: 'validate-user' })
-  async validateUser(data: any) {
-    this.metricsService.incrementTcpRequests();
+  @Post('login')
+  async login(@Body() body: any) {
+    // body: { email, password }
+    return this.service.login(body);
+  }
 
-    return extractOtelContext(data, () => {
-      const span = trace
-        .getTracer(process.env.SERVICE_NAME ?? 'microservice')
-        .startSpan('message_validate_user');
-      span.setAttributes({
-        'user.id': data.userId,
-      });
-      span.addEvent('Processando mensagem');
-      span.end();
-      return { userId: data.userId, processed: true };
-    });
+  @Post('refresh')
+  async refresh(@Body() body: any) {
+    // body: { refreshToken }
+    return this.service.refresh(body);
   }
 }
