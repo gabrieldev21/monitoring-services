@@ -23,23 +23,6 @@
           "auth": {
             "type": "noauth"
           },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "const json = pm.response.json();",
-                  "if (json && json.accessToken) pm.collectionVariables.set('accessToken', json.accessToken);",
-                  "if (json && json.refreshToken) pm.collectionVariables.set('refreshToken', json.refreshToken);",
-                  "pm.test('has tokens', function () {",
-                  "  pm.expect(json).to.have.property('accessToken');",
-                  "  pm.expect(json).to.have.property('refreshToken');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -112,26 +95,6 @@
         },
         {
           "name": "Refresh",
-          "auth": {
-            "type": "noauth"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "const json = pm.response.json();",
-                  "if (json && json.accessToken) pm.collectionVariables.set('accessToken', json.accessToken);",
-                  "if (json && json.refreshToken) pm.collectionVariables.set('refreshToken', json.refreshToken);",
-                  "pm.test('has tokens', function () {",
-                  "  pm.expect(json).to.have.property('accessToken');",
-                  "  pm.expect(json).to.have.property('refreshToken');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -169,6 +132,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
               }
             ],
             "body": {
@@ -190,6 +157,12 @@
           "name": "List Catalog",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/catalog",
               "host": [
@@ -205,6 +178,12 @@
           "name": "Get Catalog by ID",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/catalog/:id",
               "host": [
@@ -225,6 +204,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
               }
             ],
             "body": {
@@ -247,6 +230,12 @@
           "name": "Delete Catalog",
           "request": {
             "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/catalog/:id",
               "host": [
@@ -272,6 +261,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
               }
             ],
             "body": {
@@ -293,6 +286,12 @@
           "name": "List Notifications",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/notification",
               "host": [
@@ -308,6 +307,12 @@
           "name": "Get Notification by ID",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/notification/:id",
               "host": [
@@ -333,11 +338,15 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"productIds\": [1, 2]\n}"
+              "raw": "{\n  \"productIds\": [1]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/order",
@@ -354,6 +363,12 @@
           "name": "List Orders",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/order",
               "host": [
@@ -369,6 +384,12 @@
           "name": "Get Order by ID",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/order/:id",
               "host": [
@@ -377,6 +398,26 @@
               "path": [
                 "order",
                 ":id"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
               ]
             }
           }
