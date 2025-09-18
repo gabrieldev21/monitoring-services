@@ -17,6 +17,9 @@ export class Auth {
   @Column({ type: 'varchar', length: 150, nullable: true, select: false })
   passwordHash?: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true, select: false })
+  refreshTokenHash?: string | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 

@@ -4,6 +4,6 @@ import { NotificationModule } from './modules/notification/notification.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(NotificationModule);
-  await app.listen(process.env.port ?? 3004);
+  await app.listen(3004);
 }
 bootstrap();

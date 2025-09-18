@@ -4,17 +4,6 @@ receivers:
       grpc:
         endpoint: 0.0.0.0:4317
 
-exporters:
-  debug:
-    verbosity: detailed
-  prometheus:
-    endpoint: 0.0.0.0:8889
-    send_timestamps: true
-  otlp:
-    endpoint: jaeger:4317
-    tls:
-      insecure: true
-
 processors:
   batch:
   attributes:
@@ -22,6 +11,25 @@ processors:
       - action: insert
         key: env
         value: '${DEPLOY_ENV}'
+
+exporters:
+  # Exportador para Prometheus (métricas)
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    send_timestamps: true
+
+  # Exportador OTLP para Jaeger (traces)
+  otlp:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+  # Exportador para Loki (logs)
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
+  debug:
+    verbosity: detailed
 
 extensions:
   zpages:
@@ -37,4 +45,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlp]
+      exporters: [otlp]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [loki]
