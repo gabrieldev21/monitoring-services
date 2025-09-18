@@ -34,6 +34,7 @@ export class CatalogService {
         `Falha ao notificar criação de catálogo ${saved.id}: ${err?.message}`,
       );
     }
+    return saved;
   }
 
   findAll() {
@@ -46,7 +47,24 @@ export class CatalogService {
 
   async update(id: number, updateCatalogDto: UpdateCatalogDto) {
     await this.repo.update({ id }, updateCatalogDto as any);
-    return this.repo.findOne({ where: { id } });
+    const saved = await this.repo.findOne({ where: { id } });
+    if (!saved) return null;
+
+    const url = 'http://ms-notification:3004/notification';
+    try {
+      await axios.post(url, {
+        type: 'catalog_updated',
+        message: `Catálogo ${saved.id} atualizado.`,
+      });
+      this.logger.log(
+        `Notificação enviada para ms-notification sobre atualização do catálogo ${saved.id}`,
+      );
+    } catch (err: any) {
+      this.logger.warn(
+        `Falha ao notificar atualização de catálogo ${saved.id}: ${err?.message}`,
+      );
+    }
+    return saved;
   }
 
   async remove(id: number) {

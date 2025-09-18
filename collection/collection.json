@@ -276,7 +276,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"message\": \"Nova notificação\"\n}"
+              "raw": "{\n  \"type\": \"custom\",\n  \"message\": \"Nova notificação\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/notification",
@@ -319,48 +319,6 @@
               ]
             }
           }
-        },
-        {
-          "name": "Update Notification",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"message\": \"Notificação atualizada\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/notification/:id",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "notification",
-                ":id"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Delete Notification",
-          "request": {
-            "method": "DELETE",
-            "url": {
-              "raw": "{{baseUrl}}/notification/:id",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "notification",
-                ":id"
-              ]
-            }
-          }
         }
       ]
     },
@@ -379,7 +337,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"productId\": \"1\",\n  \"quantity\": 2\n}"
+              "raw": "{\n  \"productIds\": [1, 2]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/order",

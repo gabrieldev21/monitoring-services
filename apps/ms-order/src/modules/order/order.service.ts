@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import axios from 'axios';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
+import { Catalog } from 'apps/ms-catalog/src/modules/catalog/entities/catalog.entity';
 
 @Injectable()
 export class OrderService {
@@ -11,10 +12,23 @@ export class OrderService {
   constructor(
     @InjectRepository(Order)
     private readonly repo: Repository<Order>,
+    @InjectRepository(Catalog)
+    private readonly catalogRepo: Repository<Catalog>,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    const entity = this.repo.create(createOrderDto);
+    // Resolve productIds to Catalog entities
+    const { productIds } = createOrderDto;
+    const products = await this.catalogRepo.find({
+      where: { id: In(productIds) },
+    });
+    if (products.length !== productIds.length) {
+      this.logger.warn(
+        `Alguns produtos não foram encontrados: enviados=${productIds.length}, encontrados=${products.length}`,
+      );
+    }
+
+    const entity = this.repo.create({ products });
     const saved: Order = await this.repo.save(entity);
     const url = 'http://ms-notification:3004/notification';
 
@@ -23,12 +37,13 @@ export class OrderService {
         type: 'order_created',
         message: `Pedido ${saved.id} criado com sucesso.`,
       });
-      return saved;
     } catch (error) {
       this.logger.warn(
         `Falha ao notificar criação do pedido ${saved.id}: ${error?.message}`,
       );
     }
+
+    return saved;
   }
 
   findAll() {
