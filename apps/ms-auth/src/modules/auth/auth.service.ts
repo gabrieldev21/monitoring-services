@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { getJwtSecret, JWT_ALGORITHM } from 'apps/@shared/infra/jwt-keys';
-import { CreateUserDto } from 'apps/@shared/DTO/auth/DTO/create-user.dto';
-import { ValidateUserDto } from 'apps/@shared/DTO/auth/DTO/validate-user.dto';
-import { RefreshLoginDto } from 'apps/@shared/DTO/auth/DTO/refresh-login.dto';
+import { CreateUserDto } from 'apps/@shared/DTO/auth/create-user.dto';
+import { ValidateUserDto } from 'apps/@shared/DTO/auth/validate-user.dto';
+import { RefreshLoginDto } from 'apps/@shared/DTO/auth/refresh-login.dto';
 import { Auth } from './entities/auth.entity';
 
 @Injectable()

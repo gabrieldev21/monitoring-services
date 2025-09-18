@@ -1,19 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import axios from 'axios';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
 
 @Injectable()
 export class OrderService {
+  private readonly logger = new Logger(OrderService.name);
   constructor(
     @InjectRepository(Order)
     private readonly repo: Repository<Order>,
   ) {}
 
-  create(createOrderDto: CreateOrderDto) {
-    const entity = this.repo.create(createOrderDto as any);
-    return this.repo.save(entity);
+  async create(createOrderDto: CreateOrderDto) {
+    const url = 'http://api-gateway:3000/notification';
+    const entity = this.repo.create(createOrderDto);
+    const saved: Order = await this.repo.save(entity);
+
+    try {
+      await axios.post(url, {
+        type: 'order_created',
+        message: `Pedido ${saved.id} criado com sucesso.`,
+      });
+      return saved;
+    } catch (error) {
+      this.logger.warn(
+        `Falha ao notificar criação do pedido ${saved.id}: ${error?.message}`,
+      );
+    }
   }
 
   findAll() {

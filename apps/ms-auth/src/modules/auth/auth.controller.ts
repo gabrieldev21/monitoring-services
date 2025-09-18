@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../../../../@shared/DTO/auth/DTO/create-user.dto';
-import { ValidateUserDto } from '../../../../@shared/DTO/auth/DTO/validate-user.dto';
-import { RefreshLoginDto } from '../../../../@shared/DTO/auth/DTO/refresh-login.dto';
+import { CreateUserDto } from 'apps/@shared/DTO/auth/create-user.dto';
+import { RefreshLoginDto } from 'apps/@shared/DTO/auth/refresh-login.dto';
+import { ValidateUserDto } from 'apps/@shared/DTO/auth/validate-user.dto';
 
 @Controller()
 export class AuthController {

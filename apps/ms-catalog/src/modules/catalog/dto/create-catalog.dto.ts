@@ -1,3 +1,6 @@
+import { IsString } from 'class-validator';
+
 export class CreateCatalogDto {
-  id: number;
+  @IsString()
+  name: string;
 }
