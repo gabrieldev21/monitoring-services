@@ -15,12 +15,6 @@ services:
       - MS_AUTH_URL=http://ms-auth:3001
       - SERVICE_NAME=api-gateway
       - JWT_SECRET=dev-super-secret-change-me
-
-      - OTEL_LOGS_EXPORTER=none
-      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://opentelemetry-collector:4317
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     restart: unless-stopped
     healthcheck:
       test:
@@ -50,12 +44,6 @@ services:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-auth
-
-      - OTEL_LOGS_EXPORTER=none
-      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://opentelemetry-collector:4317
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     restart: unless-stopped
 
   ms-catalog:
@@ -72,12 +60,6 @@ services:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-catalog
-
-      - OTEL_LOGS_EXPORTER=none
-      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://opentelemetry-collector:4317
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     restart: unless-stopped
 
   ms-notification:
@@ -94,12 +76,6 @@ services:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-notification
-
-      - OTEL_LOGS_EXPORTER=none
-      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://opentelemetry-collector:4317
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     restart: unless-stopped
 
   ms-order:
@@ -116,12 +92,6 @@ services:
       - NODE_ENV=production
       - PROMETHEUS_URL=http://prometheus:9090
       - SERVICE_NAME=ms-order
-
-      - OTEL_LOGS_EXPORTER=none
-      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://opentelemetry-collector:4317
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     restart: unless-stopped
 
 networks:
