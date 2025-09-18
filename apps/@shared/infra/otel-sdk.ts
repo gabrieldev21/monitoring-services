@@ -41,8 +41,7 @@ const loggerProvider = new LoggerProvider({
 
 logs.setGlobalLoggerProvider(loggerProvider);
 
-const logger = loggerProvider.getLogger('app-logger');
-logger.emit({ body: 'Hello OTEL logs!' });
+// You can obtain a logger via: loggerProvider.getLogger('app-logger')
 
 const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
   registerOnInitialization: true,
@@ -75,4 +74,4 @@ process.on('beforeExit', async () => {
 
 sdk.start();
 
-export {};
+export { loggerProvider };

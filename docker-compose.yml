@@ -14,6 +14,7 @@ services:
       - PROMETHEUS_URL=http://prometheus:9090
       - MS_AUTH_URL=http://ms-auth:3001
       - SERVICE_NAME=api-gateway
+      - JWT_SECRET=dev-super-secret-change-me
 
       - OTEL_LOGS_EXPORTER=none
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://opentelemetry-collector:4317

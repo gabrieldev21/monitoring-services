@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import axios from 'axios';
-import { Public } from './jwt.util';
+import { Public } from 'apps/@shared/infra/jwt.util';
 import { CreateUserDto } from 'apps/@shared/DTO/auth/DTO/create-user.dto';
 import { ValidateUserDto } from 'apps/@shared/DTO/auth/DTO/validate-user.dto';
 import { RefreshLoginDto } from 'apps/@shared/DTO/auth/DTO/refresh-login.dto';
@@ -11,14 +11,14 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  async login(@Body() body: CreateUserDto) {
+  async login(@Body() body: ValidateUserDto) {
     const { data } = await axios.post(`${this.msAuthUrl}/login`, body);
     return data;
   }
 
   @Public()
   @Post('register')
-  async register(@Body() body: ValidateUserDto) {
+  async register(@Body() body: CreateUserDto) {
     const { data } = await axios.post(`${this.msAuthUrl}/register`, body);
     return data;
   }
