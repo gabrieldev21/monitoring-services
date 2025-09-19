@@ -41,8 +41,6 @@ const loggerProvider = new LoggerProvider({
 
 logs.setGlobalLoggerProvider(loggerProvider);
 
-// You can obtain a logger via: loggerProvider.getLogger('app-logger')
-
 const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
   registerOnInitialization: true,
 });

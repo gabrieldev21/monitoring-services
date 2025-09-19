@@ -17,7 +17,6 @@ export class OrderService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    // Resolve productIds to Catalog entities
     const { productIds } = createOrderDto;
     const products = await this.catalogRepo.find({
       where: { id: In(productIds) },
