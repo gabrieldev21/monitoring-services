@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import axios from 'axios';
 import { CreateCatalogDto } from '../../../../@shared/DTO/catalog/create-catalog.dto';
 import { UpdateCatalogDto } from '../../../../@shared/DTO/catalog/update-catalog.dto';
 import { Catalog } from './entities/catalog.entity';
-import axios from 'axios';
 
 @Injectable()
 export class CatalogService {
@@ -24,9 +24,6 @@ export class CatalogService {
         type: 'catalog_created',
         message: `Catalogo ${saved.id} criado/atualizado.`,
       });
-      this.logger.log(
-        `Notificação enviada para ms-notification sobre catálogo ${saved.id}`,
-      );
 
       return saved;
     } catch (err: any) {
