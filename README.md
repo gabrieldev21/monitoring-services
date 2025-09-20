@@ -1,6 +1,8 @@
 ## Monitoring Services — Microsserviços com Observabilidade (TCC)
 
-Projeto de estudo/TCC focado em Monitoramento e Observabilidade em microsserviços Node.js/NestJS com OpenTelemetry, Prometheus, Grafana, Jaeger e Loki.
+Projeto de conclusão de curso, do MBA de Engenharia de Software da USP / Esalq
+
+TEMA: Monitoramento e Observabilidade em Microsserviços Node.js com Ferramentas Open Source
 
 Stack implementada:
 
