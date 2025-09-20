@@ -1,9 +1,5 @@
 ## Monitoring Services — Microsserviços com Observabilidade (TCC)
 
-Projeto de conclusão de curso, do MBA de Engenharia de Software da USP / Esalq
-
-TEMA: Monitoramento e Observabilidade em Microsserviços Node.js com Ferramentas Open Source
-
 Stack implementada:
 
 - API Gateway (HTTP)
@@ -25,7 +21,11 @@ Stack implementada:
 
 ## Sobre o projeto
 
-O objetivo é demonstrar boas práticas de observabilidade em um ambiente de microsserviços Node.js/NestJS, cobrindo:
+**Projeto de conclusão de curso do MBA em Engenharia de Software da USP/Esalq.**
+
+**Tema:** Monitoramento e Observabilidade em Microsserviços Node.js com Ferramentas Open Source.
+
+**Objetivo** demonstrar viabilidade e boas práticas de observabilidade open source em um ambiente de microsserviços Node.js/NestJS, cobrindo:
 
 - Tracing distribuído com OpenTelemetry (coletado pelo OTel Collector e visualizado no Jaeger)
 - Métricas via OpenTelemetry → OTel Collector → Prometheus → Grafana
