@@ -11,7 +11,7 @@ import { CreateCatalogDto } from 'apps/@shared/DTO/catalog/create-catalog.dto';
 import { UpdateCatalogDto } from 'apps/@shared/DTO/catalog/update-catalog.dto';
 import { CatalogService } from './catalog.service';
 
-@Controller('catalog')
+@Controller('ms-catalog')
 export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 

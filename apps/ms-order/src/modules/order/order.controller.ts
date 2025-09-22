@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 
-@Controller('order')
+@Controller('ms-order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 

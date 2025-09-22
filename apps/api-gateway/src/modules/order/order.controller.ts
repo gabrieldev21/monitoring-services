@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import axios from 'axios';
+import { Public } from 'apps/@shared/infra/jwt/jwt.util';
 import { Headers } from '@nestjs/common';
 
 @Controller('order')
 export class OrderController {
-  private readonly catalogServiceUrl = 'http://ms-order:3002/order';
+  private readonly catalogServiceUrl = 'http://ms-order:3004/ms-order';
 
+  @Public()
   @Post()
   async create(
     @Body() order: any,
@@ -17,6 +19,7 @@ export class OrderController {
     return response.data;
   }
 
+  @Public()
   @Get()
   async findAll(@Headers('authorization') auth?: string): Promise<any> {
     const response = await axios.get(this.catalogServiceUrl, {
@@ -25,6 +28,7 @@ export class OrderController {
     return response.data;
   }
 
+  @Public()
   @Get(':id')
   async findOne(
     @Param('id') id: string,

@@ -8,13 +8,15 @@ import {
   Param,
   Headers,
 } from '@nestjs/common';
-import { CreateCatalogDto } from 'apps/@shared/DTO/catalog/create-catalog.dto';
 import axios from 'axios';
+import { CreateCatalogDto } from 'apps/@shared/DTO/catalog/create-catalog.dto';
+import { Public } from 'apps/@shared/infra/jwt/jwt.util';
 
 @Controller('catalog')
 export class CatalogController {
-  private readonly catalogServiceUrl = 'http://ms-catalog:3003/catalog';
+  private readonly catalogServiceUrl = 'http://ms-catalog:3003/ms-catalog';
 
+  @Public()
   @Post()
   async create(
     @Body() createCatalogDto: CreateCatalogDto,
@@ -30,6 +32,7 @@ export class CatalogController {
     return response.data;
   }
 
+  @Public()
   @Get()
   async findAll(@Headers('authorization') auth?: string) {
     const response = await axios.get(this.catalogServiceUrl, {
@@ -38,6 +41,7 @@ export class CatalogController {
     return response.data;
   }
 
+  @Public()
   @Get(':id')
   async findOne(
     @Param('id') id: string,

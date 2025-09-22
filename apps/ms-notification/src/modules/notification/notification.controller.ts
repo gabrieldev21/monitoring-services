@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from 'apps/@shared/DTO/notification/create-notification.dto';
 
-@Controller('notification')
+@Controller('ms-notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 

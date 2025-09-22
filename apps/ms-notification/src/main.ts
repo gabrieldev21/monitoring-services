@@ -8,6 +8,6 @@ async function bootstrap() {
   app.getHttpAdapter().getInstance().keepAliveTimeout = 60000;
   app.getHttpAdapter().getInstance().headersTimeout = 65000;
   app.useLogger(new OtelLogger(['error', 'warn', 'log']));
-  await app.listen(3004);
+  await app.listen(3003);
 }
 bootstrap();

@@ -29,7 +29,7 @@ export class OrderService {
 
     const entity = this.repo.create({ products });
     const saved: Order = await this.repo.save(entity);
-    const url = 'http://ms-notification:3004/notification';
+    const url = 'http://ms-notification:3003/ms-notification';
 
     try {
       await axios.post(url, {

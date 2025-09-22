@@ -47,7 +47,7 @@ export class CatalogService {
     const saved = await this.repo.findOne({ where: { id } });
     if (!saved) return null;
 
-    const url = 'http://ms-notification:3004/notification';
+    const url = 'http://ms-notification:3003/ms-notification';
     try {
       await axios.post(url, {
         type: 'catalog_updated',
