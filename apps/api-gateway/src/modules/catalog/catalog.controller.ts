@@ -14,7 +14,7 @@ import { Public } from 'apps/@shared/infra/jwt/jwt.util';
 
 @Controller('catalog')
 export class CatalogController {
-  private readonly catalogServiceUrl = 'http://ms-catalog:3003/ms-catalog';
+  private readonly catalogServiceUrl = 'http://ms-catalog:3002/ms-catalog';
 
   @Public()
   @Post()
