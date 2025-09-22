@@ -47,7 +47,8 @@ const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
 
 const sdk = new NodeSDK({
   serviceName: process.env.SERVICE_NAME ?? 'unknown_service',
-  metricReader,
+  metricReader:
+    process.env.SERVICE_NAME === 'api-gateway' ? metricReader : undefined,
   traceExporter,
   instrumentations: [
     getNodeAutoInstrumentations({
