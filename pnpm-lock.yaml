@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@fastify/otel':
-        specifier: ^0.9.4
-        version: 0.9.4(@opentelemetry/api@1.9.0)
       '@grpc/grpc-js':
         specifier: ^1.13.4
         version: 1.13.4
@@ -607,11 +604,6 @@ packages:
   '@eslint/js@8.57.1':
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  '@fastify/otel@0.9.4':
-    resolution: {integrity: sha512-NboTg+WAJPQ/prwmXA9ey2araV2Dj5+5NoCP5dZ5sI49wGKuZZ3k0kGLiFD1CIPEh2bI2G2HXF7ozTbDauh9Yg==}
-    peerDependencies:
-      '@opentelemetry/api': ^1.9.0
 
   '@grpc/grpc-js@1.13.4':
     resolution: {integrity: sha512-GsFaMXCkMqkKIvwCQjCrwH+GHbPKBjhwo/8ZuUkWHqbI73Kky9I+pQltrlT0+MWpedCoosda53lgjYfyEPgxBg==}
@@ -6705,16 +6697,6 @@ snapshots:
       - supports-color
 
   '@eslint/js@8.57.1': {}
-
-  '@fastify/otel@0.9.4(@opentelemetry/api@1.9.0)':
-    dependencies:
-      '@opentelemetry/api': 1.9.0
-      '@opentelemetry/core': 2.1.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation': 0.203.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.36.0
-      minimatch: 10.0.3
-    transitivePeerDependencies:
-      - supports-color
 
   '@grpc/grpc-js@1.13.4':
     dependencies:

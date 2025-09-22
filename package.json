@@ -26,7 +26,6 @@
     "test:e2e": "jest --config ./apps/tcc/test/jest-e2e.json"
   },
   "dependencies": {
-    "@fastify/otel": "^0.9.4",
     "@grpc/grpc-js": "^1.13.4",
     "@grpc/reflection": "^1.0.4",
     "@nestjs/common": "^11.1.5",
