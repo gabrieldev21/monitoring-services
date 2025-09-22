@@ -1,7 +1,6 @@
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { FastifyOtelInstrumentation } from '@fastify/otel';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
@@ -24,8 +23,8 @@ const options = {
 const metricExporter = new OTLPMetricExporter(options);
 const metricReader = new PeriodicExportingMetricReader({
   exporter: metricExporter,
-  exportIntervalMillis: Number(5000),
-  exportTimeoutMillis: Number(5000),
+  exportIntervalMillis: Number(process.env.METRICS_EXPORT_INTERVAL_MS ?? 15000),
+  exportTimeoutMillis: Number(process.env.METRICS_EXPORT_TIMEOUT_MS ?? 10000),
 });
 
 const traceExporter = new OTLPTraceExporter(options);
@@ -41,28 +40,28 @@ const loggerProvider = new LoggerProvider({
 
 logs.setGlobalLoggerProvider(loggerProvider);
 
-const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
-  registerOnInitialization: true,
-});
-
 const sdk = new NodeSDK({
   serviceName: process.env.SERVICE_NAME ?? 'unknown_service',
-  metricReader:
-    process.env.SERVICE_NAME === 'api-gateway' ? metricReader : undefined,
+  metricReader: process.env.SERVICE_NAME === 'api-gateway' && metricReader,
   traceExporter,
   instrumentations: [
     getNodeAutoInstrumentations({
       '@opentelemetry/instrumentation-http': {
-        ignoreIncomingRequestHook: (req) =>
-          req.url?.includes('/health') ?? false,
-      },
-      '@opentelemetry/instrumentation-express': {
-        enabled: true,
+        ignoreIncomingRequestHook: (req) => {
+          const url = req.url ?? '';
+          return url.includes('/health') || url.includes('/metrics');
+        },
+        ignoreOutgoingRequestHook: (options) => {
+          const host =
+            typeof options === 'string'
+              ? options
+              : options?.hostname || options?.host || '';
+          return host.includes('opentelemetry-collector');
+        },
       },
       '@opentelemetry/instrumentation-nestjs-core': {},
       '@opentelemetry/instrumentation-net': { enabled: false },
     }),
-    fastifyOtelInstrumentation,
   ],
 });
 
