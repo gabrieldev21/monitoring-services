@@ -61,6 +61,8 @@ const sdk = new NodeSDK({
       },
       '@opentelemetry/instrumentation-nestjs-core': {},
       '@opentelemetry/instrumentation-net': { enabled: false },
+      '@opentelemetry/instrumentation-dns': { enabled: false },
+      '@opentelemetry/instrumentation-fs': { enabled: false },
     }),
   ],
 });
