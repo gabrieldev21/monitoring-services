@@ -6,6 +6,8 @@ receivers:
 
 processors:
   batch:
+    timeout: 10s
+    send_batch_size: 1000
   attributes:
     actions:
       - action: insert
@@ -13,21 +15,16 @@ processors:
         value: '${DEPLOY_ENV}'
 
 exporters:
-  # Exportador para Prometheus (métricas)
   prometheus:
     endpoint: 0.0.0.0:8889
     send_timestamps: true
 
-  # Exportador OTLP para Jaeger (traces)
   otlp:
     endpoint: jaeger:4317
     tls:
       insecure: true
-
-  # Exportador para Loki (logs)
   loki:
     endpoint: http://loki:3100/loki/api/v1/push
-
   debug:
     verbosity: detailed
 
