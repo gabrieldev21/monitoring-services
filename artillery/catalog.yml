@@ -9,11 +9,12 @@ config:
   variables:
     email: 'user@example.com'
     password: 'secret123'
+  ensure:
+    maxRequestsPerSecond: 200
 
 scenarios:
-  - name: Auth then create catalog
+  - name: Auth then call catalog post and get by id
     flow:
-      # Login para obter accessToken
       - post:
           url: '/auth/login'
           json:
@@ -24,8 +25,6 @@ scenarios:
               as: accessToken
           expect:
             - statusCode: 201
-
-      # Criar item de catálogo com Authorization
       - post:
           url: '/catalog'
           headers:
@@ -35,9 +34,8 @@ scenarios:
             price: 120
           expect:
             - statusCode: 201
-
       - get:
-          url: '/catalog'
+          url: '/catalog/1'
           headers:
             Authorization: 'Bearer {{ accessToken }}'
           expect:
