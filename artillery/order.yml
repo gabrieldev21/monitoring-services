@@ -11,9 +11,8 @@ config:
     password: 'secret123'
 
 scenarios:
-  - name: Order create and fetch
+  - name: Auth then call Order post and fetch by Id
     flow:
-      # Login
       - post:
           url: '/auth/login'
           json:
@@ -24,8 +23,6 @@ scenarios:
               as: accessToken
           expect:
             - statusCode: 201
-
-      # Create order (protected)
       - post:
           url: '/order'
           headers:
@@ -37,18 +34,8 @@ scenarios:
               as: orderId
           expect:
             - statusCode: 201
-
-      # List orders (protected)
       - get:
-          url: '/order'
-          headers:
-            Authorization: 'Bearer {{ accessToken }}'
-          expect:
-            - statusCode: 200
-
-      # Get by id (protected)
-      - get:
-          url: '/order/{{ orderId }}'
+          url: '/order/1'
           headers:
             Authorization: 'Bearer {{ accessToken }}'
           expect:

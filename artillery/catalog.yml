@@ -13,7 +13,7 @@ config:
     maxRequestsPerSecond: 200
 
 scenarios:
-  - name: Auth then call catalog post and get by id
+  - name: Auth then call catalog post and fetch by Id
     flow:
       - post:
           url: '/auth/login'

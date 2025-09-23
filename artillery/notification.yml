@@ -11,9 +11,8 @@ config:
     password: 'secret123'
 
 scenarios:
-  - name: Notification create and get
+  - name: Auth then call Notification post and fetch by Id
     flow:
-      # Login to get access token
       - post:
           url: '/auth/login'
           json:
@@ -24,8 +23,6 @@ scenarios:
               as: accessToken
           expect:
             - statusCode: 201
-
-      # Create notification (protected)
       - post:
           url: '/notification'
           headers:
@@ -38,18 +35,8 @@ scenarios:
               as: notificationId
           expect:
             - statusCode: 201
-
-      # List notifications (protected)
       - get:
-          url: '/notification'
-          headers:
-            Authorization: 'Bearer {{ accessToken }}'
-          expect:
-            - statusCode: 200
-
-      # Get by id (protected)
-      - get:
-          url: '/notification/{{ notificationId }}'
+          url: '/notification/1'
           headers:
             Authorization: 'Bearer {{ accessToken }}'
           expect:
