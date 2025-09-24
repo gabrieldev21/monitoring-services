@@ -20,11 +20,32 @@ const options = {
   compression: CompressionAlgorithm.GZIP,
 };
 
-const metricExporter = new OTLPMetricExporter(options);
+const parsePositiveNumber = (value: string | undefined, fallback: number) => {
+  if (!value) return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const metricsExportInterval = Math.max(
+  1000,
+  parsePositiveNumber(process.env.METRICS_EXPORT_INTERVAL_MS, 5000),
+);
+
+const defaultTimeout = Math.max(500, Math.floor(metricsExportInterval * 0.8));
+const metricsExportTimeoutInput = parsePositiveNumber(
+  process.env.METRICS_EXPORT_TIMEOUT_MS,
+  defaultTimeout,
+);
+
+const metricsExportTimeout = Math.min(
+  Math.max(200, metricsExportTimeoutInput),
+  Math.max(200, metricsExportInterval - 100),
+);
+
 const metricReader = new PeriodicExportingMetricReader({
-  exporter: metricExporter,
-  exportIntervalMillis: Number(process.env.METRICS_EXPORT_INTERVAL_MS ?? 15000),
-  exportTimeoutMillis: Number(process.env.METRICS_EXPORT_TIMEOUT_MS ?? 10000),
+  exporter: new OTLPMetricExporter(options),
+  exportIntervalMillis: metricsExportInterval,
+  exportTimeoutMillis: metricsExportTimeout,
 });
 
 const traceExporter = new OTLPTraceExporter(options);
