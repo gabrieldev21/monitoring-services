@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import axios from 'axios';
+import httpClient from 'apps/@shared/infra/http/http-client';
 import { CreateCatalogDto } from '../../../../@shared/DTO/catalog/create-catalog.dto';
 import { UpdateCatalogDto } from '../../../../@shared/DTO/catalog/update-catalog.dto';
 import { Catalog } from './entities/catalog.entity';
@@ -20,7 +20,7 @@ export class CatalogService {
     const url = 'http://ms-notification:3003/ms-notification';
 
     try {
-      await axios.post(url, {
+      await httpClient.post(url, {
         type: 'catalog_created',
         message: `Catalogo ${saved.id} criado/atualizado.`,
       });
@@ -49,7 +49,7 @@ export class CatalogService {
 
     const url = 'http://ms-notification:3003/ms-notification';
     try {
-      await axios.post(url, {
+      await httpClient.post(url, {
         type: 'catalog_updated',
         message: `Catálogo ${saved.id} atualizado.`,
       });

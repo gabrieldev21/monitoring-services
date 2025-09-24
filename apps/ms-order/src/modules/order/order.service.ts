@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import axios from 'axios';
+import httpClient from 'apps/@shared/infra/http/http-client';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
 import { Catalog } from 'apps/ms-catalog/src/modules/catalog/entities/catalog.entity';
@@ -32,7 +32,7 @@ export class OrderService {
     const url = 'http://ms-notification:3003/ms-notification';
 
     try {
-      await axios.post(url, {
+      await httpClient.post(url, {
         type: 'order_created',
         message: `Pedido ${saved.id} criado com sucesso.`,
       });

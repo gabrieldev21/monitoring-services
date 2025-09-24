@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import axios from 'axios';
+import httpClient from 'apps/@shared/infra/http/http-client';
 import { Public } from 'apps/@shared/infra/jwt/jwt.util';
 import { Headers } from '@nestjs/common';
 
@@ -13,7 +13,7 @@ export class OrderController {
     @Body() order: any,
     @Headers('authorization') auth?: string,
   ): Promise<any> {
-    const response = await axios.post(this.catalogServiceUrl, order, {
+    const response = await httpClient.post(this.catalogServiceUrl, order, {
       headers: auth ? { Authorization: auth } : undefined,
     });
     return response.data;
@@ -22,7 +22,7 @@ export class OrderController {
   @Public()
   @Get()
   async findAll(@Headers('authorization') auth?: string): Promise<any> {
-    const response = await axios.get(this.catalogServiceUrl, {
+    const response = await httpClient.get(this.catalogServiceUrl, {
       headers: auth ? { Authorization: auth } : undefined,
     });
     return response.data;
@@ -34,7 +34,7 @@ export class OrderController {
     @Param('id') id: string,
     @Headers('authorization') auth?: string,
   ): Promise<any> {
-    const response = await axios.get(`${this.catalogServiceUrl}/${id}`, {
+    const response = await httpClient.get(`${this.catalogServiceUrl}/${id}`, {
       headers: auth ? { Authorization: auth } : undefined,
     });
     return response.data;
