@@ -179,7 +179,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(http_server_duration_milliseconds_count{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\"}[$__rate_interval]) * $__interval_ms / 1000) by (agent, http_route, http_method)",
+          "expr": "sum(increase(http_server_duration_milliseconds_count{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\"}[$__range])) by (agent, http_route, http_method)",
           "format": "time_series",
           "instant": false,
           "legendFormat": "{{env}} {{http_method}} {{http_route}}",
@@ -344,7 +344,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(sum(rate(http_server_duration_milliseconds_count{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\"}[$__rate_interval])) by (agent, http_route, http_method)) * $__interval_ms / 1000",
+          "expr": "sum(increase(http_server_duration_milliseconds_count{env=~\"${env}\", http_route=~\"${route}\", http_method=~\"${http_method}\"}[$__interval])) by (agent, http_route, http_method)",
           "hide": false,
           "legendFormat": "{{env}} {{http_method}} {{http_route}}",
           "range": true,

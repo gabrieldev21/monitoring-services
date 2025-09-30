@@ -8,7 +8,7 @@ import {
   Param,
   Headers,
 } from '@nestjs/common';
-import axios from 'axios';
+import httpClient from 'apps/@shared/infra/http/http-client';
 import { CreateCatalogDto } from 'apps/@shared/DTO/catalog/create-catalog.dto';
 import { Public } from 'apps/@shared/infra/jwt/jwt.util';
 
@@ -22,7 +22,7 @@ export class CatalogController {
     @Body() createCatalogDto: CreateCatalogDto,
     @Headers('authorization') auth?: string,
   ) {
-    const response = await axios.post(
+    const response = await httpClient.post(
       this.catalogServiceUrl,
       createCatalogDto,
       {
@@ -35,7 +35,7 @@ export class CatalogController {
   @Public()
   @Get()
   async findAll(@Headers('authorization') auth?: string) {
-    const response = await axios.get(this.catalogServiceUrl, {
+    const response = await httpClient.get(this.catalogServiceUrl, {
       headers: auth ? { Authorization: auth } : undefined,
     });
     return response.data;
@@ -47,7 +47,7 @@ export class CatalogController {
     @Param('id') id: string,
     @Headers('authorization') auth?: string,
   ) {
-    const response = await axios.get(`${this.catalogServiceUrl}/${id}`, {
+    const response = await httpClient.get(`${this.catalogServiceUrl}/${id}`, {
       headers: auth ? { Authorization: auth } : undefined,
     });
     return response.data;
@@ -59,7 +59,7 @@ export class CatalogController {
     @Body() updateCatalogDto: any,
     @Headers('authorization') auth?: string,
   ) {
-    const response = await axios.patch(
+    const response = await httpClient.patch(
       `${this.catalogServiceUrl}/${id}`,
       updateCatalogDto,
       { headers: auth ? { Authorization: auth } : undefined },
@@ -72,9 +72,12 @@ export class CatalogController {
     @Param('id') id: string,
     @Headers('authorization') auth?: string,
   ) {
-    const response = await axios.delete(`${this.catalogServiceUrl}/${id}`, {
-      headers: auth ? { Authorization: auth } : undefined,
-    });
+    const response = await httpClient.delete(
+      `${this.catalogServiceUrl}/${id}`,
+      {
+        headers: auth ? { Authorization: auth } : undefined,
+      },
+    );
     return response.data;
   }
 }

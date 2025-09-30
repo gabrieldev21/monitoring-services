@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import axios from 'axios';
+import httpClient from 'apps/@shared/infra/http/http-client';
 import { Public } from 'apps/@shared/infra/jwt/jwt.util';
 import { CreateUserDto } from 'apps/@shared/DTO/auth/create-user.dto';
 import { ValidateUserDto } from 'apps/@shared/DTO/auth/validate-user.dto';
@@ -10,14 +10,17 @@ export class AuthController {
   @Public()
   @Post('login')
   async login(@Body() body: ValidateUserDto) {
-    const { data } = await axios.post(`${process.env.MS_AUTH_URL}/login`, body);
+    const { data } = await httpClient.post(
+      `${process.env.MS_AUTH_URL}/login`,
+      body,
+    );
     return data;
   }
 
   @Public()
   @Post('register')
   async register(@Body() body: CreateUserDto) {
-    const { data } = await axios.post(
+    const { data } = await httpClient.post(
       `${process.env.MS_AUTH_URL}/register`,
       body,
     );
@@ -27,7 +30,7 @@ export class AuthController {
   @Public()
   @Post('refresh')
   async refresh(@Body() body: RefreshLoginDto) {
-    const { data } = await axios.post(
+    const { data } = await httpClient.post(
       `${process.env.MS_AUTH_URL}/refresh`,
       body,
     );
