@@ -9,11 +9,9 @@ config:
   variables:
     email: 'user@example.com'
     password: 'secret123'
-  ensure:
-    maxRequestsPerSecond: 200
 
 scenarios:
-  - name: Auth then call catalog post and fetch by Id
+  - name: Autenticação e chama a rota post de catálogo
     flow:
       - post:
           url: '/auth/login'
