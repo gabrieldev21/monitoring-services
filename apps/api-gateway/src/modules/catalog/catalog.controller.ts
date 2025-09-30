@@ -10,13 +10,11 @@ import {
 } from '@nestjs/common';
 import httpClient from 'apps/@shared/infra/http/http-client';
 import { CreateCatalogDto } from 'apps/@shared/DTO/catalog/create-catalog.dto';
-import { Public } from 'apps/@shared/infra/jwt/jwt.util';
 
 @Controller('catalog')
 export class CatalogController {
   private readonly catalogServiceUrl = 'http://ms-catalog:3002/ms-catalog';
 
-  @Public()
   @Post()
   async create(
     @Body() createCatalogDto: CreateCatalogDto,
@@ -32,7 +30,6 @@ export class CatalogController {
     return response.data;
   }
 
-  @Public()
   @Get()
   async findAll(@Headers('authorization') auth?: string) {
     const response = await httpClient.get(this.catalogServiceUrl, {
@@ -41,7 +38,6 @@ export class CatalogController {
     return response.data;
   }
 
-  @Public()
   @Get(':id')
   async findOne(
     @Param('id') id: string,
