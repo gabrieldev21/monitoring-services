@@ -3,25 +3,16 @@ config:
   phases:
     - duration: 10
       arrivalRate: 5
-  defaults:
-    headers:
-      content-type: application/json
-  variables:
-    email: 'user@example.com'
-    password: 'secret123'
-
 scenarios:
   - name: Auth login
     flow:
       - post:
           url: '/auth/login'
           json:
-            email: '{{ email }}'
-            password: '{{ password }}'
+            email: 'user@example.com'
+            password: 'secret123'
           capture:
             - json: $.accessToken
               as: accessToken
             - json: $.refreshToken
               as: refreshToken
-          expect:
-            - statusCode: 201

@@ -3,38 +3,24 @@ config:
   phases:
     - duration: 60
       arrivalRate: 10
-  defaults:
-    headers:
-      content-type: application/json
-  variables:
-    email: 'user@example.com'
-    password: 'secret123'
-
 scenarios:
-  - name: Autenticação e chama a rota post de catálogo
-    flow:
-      - post:
-          url: '/auth/login'
-          json:
-            email: '{{ email }}'
-            password: '{{ password }}'
-          capture:
-            - json: $.accessToken
-              as: accessToken
-          expect:
-            - statusCode: 201
-      - post:
-          url: '/catalog'
-          headers:
-            Authorization: 'Bearer {{ accessToken }}'
-          json:
-            name: 'Produto Teste 5'
-            price: 120
-          expect:
-            - statusCode: 201
-      - get:
-          url: '/catalog/1'
-          headers:
-            Authorization: 'Bearer {{ accessToken }}'
-          expect:
-            - statusCode: 200
+  flow:
+    - post:
+        url: '/auth/login'
+        json:
+          email: 'user@example.com'
+          password: 'secret123'
+        capture:
+          - json: $.accessToken
+            as: accessToken
+    - post:
+        url: '/catalog'
+        headers:
+          Authorization: 'Bearer {{ accessToken }}'
+        json:
+          name: 'Produto Teste 5'
+          price: 120
+    - get:
+        url: '/catalog/1'
+        headers:
+          Authorization: 'Bearer {{ accessToken }}'

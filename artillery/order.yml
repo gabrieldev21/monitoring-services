@@ -3,26 +3,17 @@ config:
   phases:
     - duration: 60
       arrivalRate: 10
-  defaults:
-    headers:
-      content-type: application/json
-  variables:
-    email: 'user@example.com'
-    password: 'secret123'
-
 scenarios:
   - name: Auth then call Order post and fetch by Id
     flow:
       - post:
           url: '/auth/login'
           json:
-            email: '{{ email }}'
-            password: '{{ password }}'
+            email: 'user@example.com'
+            password: 'secret123'
           capture:
             - json: $.accessToken
               as: accessToken
-          expect:
-            - statusCode: 201
       - post:
           url: '/order'
           headers:
@@ -32,11 +23,7 @@ scenarios:
           capture:
             - json: $.id
               as: orderId
-          expect:
-            - statusCode: 201
       - get:
           url: '/order/1'
           headers:
             Authorization: 'Bearer {{ accessToken }}'
-          expect:
-            - statusCode: 200

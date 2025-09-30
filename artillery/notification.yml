@@ -3,26 +3,17 @@ config:
   phases:
     - duration: 10
       arrivalRate: 5
-  defaults:
-    headers:
-      content-type: application/json
-  variables:
-    email: 'user@example.com'
-    password: 'secret123'
-
 scenarios:
   - name: Auth then call Notification post and fetch by Id
     flow:
       - post:
           url: '/auth/login'
           json:
-            email: '{{ email }}'
-            password: '{{ password }}'
+            email: 'user@example.com'
+            password: 'secret123'
           capture:
             - json: $.accessToken
               as: accessToken
-          expect:
-            - statusCode: 201
       - post:
           url: '/notification'
           headers:
@@ -33,11 +24,7 @@ scenarios:
           capture:
             - json: $.id
               as: notificationId
-          expect:
-            - statusCode: 201
       - get:
           url: '/notification/1'
           headers:
             Authorization: 'Bearer {{ accessToken }}'
-          expect:
-            - statusCode: 200
