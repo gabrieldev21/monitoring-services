@@ -16,7 +16,6 @@ datasources:
     uid: loki
     access: proxy
     url: http://loki:3100
-    folder: ''
-    type: file
-    options:
-      path: /etc/grafana/provisioning/dashboards
+    type: loki
+    isDefault: false
+    editable: true
